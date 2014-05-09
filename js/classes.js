@@ -21,3 +21,40 @@ function Room(x, y, width, height) {
             && this.y <= otherRoom.brY && otherRoom.brY >= otherRoom.y);
   }
 }
+
+function Enemy(x, y, hp) {
+  this.x = x
+  this.y = y
+  this.hp = hp
+
+  this.moveTo = function(x, y) {
+    if (!blocksMovement(map[y][x])) {     
+      this.y = y
+      this.x = x
+
+      if (y == player.y && x == player.x) {
+        attackPlayer()
+      }
+
+      updateEnemy(this)
+    }
+  }
+
+}
+
+function Player(x, y, hp) {
+  this.x = x
+  this.y = y
+  this.hp = hp
+
+  this.moveTo = function(x, y) {
+    if (!blocksMovement(map[y][x])) {     
+      this.y = y
+      this.x = x
+
+      updatePlayer()
+    }
+
+    attackEnemy()
+  }
+}

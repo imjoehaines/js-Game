@@ -7,9 +7,12 @@ var grassAltChar = ","
 var wallChar = "#"
 
 var map = [];
+
 var player = {};
 var playerSprite;
 var playerStartLoc;
+
+var allEnemies = []
 
 var sprites = {
   ".": "grass",
@@ -33,6 +36,7 @@ PlayState.prototype = {
     jsGame.load.image("vcor", "img/vCor.png")
 
     jsGame.load.image("player", "img/paladin.gif")
+    jsGame.load.image("orc", "img/orc.gif")
   },
   
   create:  function() {
@@ -45,6 +49,9 @@ PlayState.prototype = {
 
     initPlayer()
 
+    placeEnemies()
+    drawEnemies()
+
     jsGame.camera.follow(playerSprite, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
   },
 
@@ -54,23 +61,26 @@ PlayState.prototype = {
 }
 
 function onKeyPress(event) {
-  switch (event.keyCode) {
-    case Phaser.Keyboard.UP:
-      player.moveTo(player.x, player.y - 1)
-      break
-
-    case Phaser.Keyboard.RIGHT:
-      player.moveTo(player.x + 1, player.y)
-      break
-
-    case Phaser.Keyboard.DOWN:
-      player.moveTo(player.x, player.y + 1)
-      break
-
-    case Phaser.Keyboard.LEFT:
-      player.moveTo(player.x - 1, player.y)
-      break
+  var hadTurn = false
+  if (event.keyCode == Phaser.Keyboard.UP) {
+    player.moveTo(player.x, player.y - 1)
+    hadTurn = true
   }
+  else if(event.keyCode == Phaser.Keyboard.RIGHT) {
+    player.moveTo(player.x + 1, player.y)
+    hadTurn = true
+  }
+  else if(event.keyCode == Phaser.Keyboard.DOWN) {
+    player.moveTo(player.x, player.y + 1) 
+    hadTurn = true
+  }
+  else if(event.keyCode == Phaser.Keyboard.LEFT){
+    player.moveTo(player.x - 1, player.y)
+    hadTurn = true
+  }
+
+  if (hadTurn)
+    enemyTurn()
 }
 
 function makeMap() {
@@ -179,27 +189,9 @@ function drawMap() {
 }
 
 function initPlayer() {
-  player = {
-    x: playerStartLoc[1],
-    y: playerStartLoc[0],
-    hp: 50
-  }
-
-  player.moveTo = function(x, y) {
-    if (!blocksMovement(map[y][x])) {     
-      this.y = y
-      this.x = x
-
-      updatePlayer()
-    }
-  }
+  player = new Player(playerStartLoc[1], playerStartLoc[0], 50)
 
   playerSprite = jsGame.add.sprite(player.x * TileSize, player.y * TileSize, "player");
-}
-
-function updatePlayer() {
-  playerSprite.x = player.x * TileSize
-  playerSprite.y = player.y * TileSize
 }
 
 function blocksMovement(tile) {
@@ -209,4 +201,99 @@ function blocksMovement(tile) {
 
   return (spritesBlockMovement.indexOf(tile) > -1)
   //return false // for testing allow movement anywhere 
+}
+
+function placeEnemies() {
+  for (var y = 0; y < NoRows; y++)
+    for (var x = 0; x < NoColumns; x++)
+      if (map[y][x] == grassChar && !(x == player.x && y == player.y)) 
+        if (randomBetween(1, 100) > 97) {
+          var newEnemy = new Enemy(x, y, 50)
+          allEnemies.push(newEnemy)
+        }
+}
+
+function drawEnemies() {
+  for (var i = 0; i < allEnemies.length; i++)
+    allEnemies[i].sprite = jsGame.add.sprite(allEnemies[i].x * TileSize,
+      allEnemies[i].y * TileSize, "orc")
+}
+
+function enemyTurn() {
+  for (var i = 0; i < allEnemies.length; i++) {
+    var enemy = allEnemies[i]
+    var dirChoice = Math.round(randomBetween(1, 4))
+    if (dirChoice == 1)
+      enemy.moveTo(enemy.x - 1, enemy.y)
+    else if (dirChoice == 2)
+      enemy.moveTo(enemy.x + 1, enemy.y)
+    else if (dirChoice == 3)
+      enemy.moveTo(enemy.x, enemy.y - 1)
+    else if (dirChoice == 4)
+      enemy.moveTo(enemy.x, enemy.y + 1)
+    updateEnemy(enemy)
+  }
+}
+
+function updatePlayer() {
+  playerSprite.x = player.x * TileSize
+  playerSprite.y = player.y * TileSize
+}
+
+function updateEnemy(enemy) {
+  enemy.sprite.x = enemy.x * TileSize
+  enemy.sprite.y = enemy.y * TileSize
+}
+
+function attackPlayer() {
+  //playerSprite.destroy()
+
+  var text = "You Died :(\nRIP in Pepperonis";
+  var style = {
+    font: "60px Arial",
+    fill: "#ff0000",
+    align: "center",
+    stroke: "#000",
+    strokeThickness: 4
+  };
+  var cameraCenterX = jsGame.camera.width/2
+  var cameraCenterY = jsGame.camera.height/2
+  var t = jsGame.add.text(cameraCenterX, cameraCenterY, text, style);
+  t.anchor.setTo(0.5, 0.5);
+  t.fixedToCamera = true;
+  setTimeout(function(){t.destroy()}, 2500)
+
+  //jsGame.input.keyboard.addCallbacks(null, null, null);
+}
+
+function attackEnemy() {
+  for (var i = 0; i < allEnemies.length; i++) {
+    if (player.x == allEnemies[i].x && player.y == allEnemies[i].y) {
+      allEnemies[i].sprite.destroy()
+      allEnemies.splice(i, 1)
+
+      var msgs = [
+        "Wow, they probably had\na family.",
+        "Murderer!",
+        "You heartless bastard",
+        "How could you?",
+        "That was a five year old.",
+        "I hope you're happy now",
+        "What's wrong with you!?"
+      ]
+      var text = msgs[randomBetween(1, msgs.length)]
+      var style = {
+        font: "24px Arial",
+        fill: "#000000",
+        align: "center"
+      };
+      var cameraCenterX = jsGame.camera.width/2
+      var cameraCenterY = jsGame.camera.height/2
+      var t = jsGame.add.text(cameraCenterX, cameraCenterY, text, style);
+      t.anchor.setTo(0.5, 0.5);
+      t.fixedToCamera = true;
+
+      setTimeout(function(){t.destroy()}, 750)
+    }
+  }
 }
