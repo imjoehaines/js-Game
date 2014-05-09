@@ -5,16 +5,20 @@ var NoRows = 640 / TileSize
 var grassChar = "."
 var grassAltChar = ","
 var wallChar = "#"
-var playerChar = "@"
+
 var map = [];
 var player = {};
+var playerSprite;
 
 var sprites = {
   ".": "grass",
   ",": "grassAlt",
-  "#": "wall",
-  "@": "player"
+  "#": "wall"
 }
+
+var spritesBlockMovement = [
+  "#" // wall
+]
 
 var PlayState = function(game) {  };
 PlayState.prototype = {
@@ -22,40 +26,21 @@ PlayState.prototype = {
     jsGame.load.image("grass", "img/grass.png")
     jsGame.load.image("grassAlt", "img/grassAlt.png")
     jsGame.load.image("wall", "img/wall.png")
-    jsGame.load.image("player", "img/player.png")
 
+    jsGame.load.image("player", "img/paladin.gif")
   },
   
   create:  function() {
-    jsGame.input.keyboard.addCallbacks(null, null, onKeyPress);
+    jsGame.input.keyboard.addCallbacks(null, onKeyPress, null);
     
-    makeMap()
-    placePlayer()
+    makeMap()  
     drawMap()
 
-    player = {
-      x: 1,
-      y: 1,
-      hp: 50,
-      "actorChar": "@"
-    }
-
-    player.moveTo = function(x, y) {
-      if (map[y][x] != wallChar) {
-        map[this.y][this.x] = grassChar
-        map[y][x] = this.actorChar
-
-        this.y = y
-        this.x = x
-
-        drawMap()
-        
-      }
-    }
-
+    initPlayer()
   },
 
   update:  function() {
+
   }
 }
 
@@ -88,7 +73,7 @@ function makeMap() {
         newRow.push(wallChar)
       else if (Math.random() > 0.8)
         newRow.push(wallChar);
-      else if (Math.random() > 0.9)
+      else if (Math.random() > 0.95)
         newRow.push(grassAltChar)
       else
         newRow.push(grassChar);
@@ -106,12 +91,36 @@ function drawMap() {
         jsGame.add.sprite(x * TileSize, y * TileSize, "grassAlt");
       else if (map[y][x] == wallChar)
         jsGame.add.sprite(x * TileSize, y * TileSize, "wall");
-      else if (map[y][x] == playerChar)
-        jsGame.add.sprite(x * TileSize, y * TileSize, "player");
 }
 
-function placePlayer() {
-  var loc = [player.y, player.x]
-  map[1][1] = playerChar
+function initPlayer() {
+
+    player = {
+    x: 1,
+    y: 1,
+    hp: 50
+  }
+
+  player.moveTo = function(x, y) {
+    if (!blocksMovement(map[y][x])) {     
+      this.y = y
+      this.x = x
+
+      updatePlayer()
+    }
+  }
+
+  playerSprite = jsGame.add.sprite(player.x * TileSize, player.y * TileSize, "player");
 }
 
+function updatePlayer() {
+  playerSprite.x = player.x * TileSize
+  playerSprite.y = player.y * TileSize
+}
+
+function blocksMovement(tile) {
+  // Returns if a given tile blocks movement
+  // looks through array and returns if there is 0 or more
+  // occurences of the given tile (i.e. it's in the array)
+  return (spritesBlockMovement.indexOf(tile) > -1)
+}
