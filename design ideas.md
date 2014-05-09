@@ -14,17 +14,17 @@
   * magic  - boosts mana, gives extra spells 
 * every stat should be useful for every character
  * warrior:
-   * strength: high damage, low speed & crit
-   * agility: high crit & speed, lower damage
-   * magic: extra "enchantment" damage - e.g. +x% fire/water/lightning damage
+    * strength: high damage, low speed & crit
+    * agility: high crit & speed, lower damage
+    * magic: extra "enchantment" damage - e.g. +x% fire/water/lightning damage
  * mage:
-   * strength: lower mana but high damage
-   * agility/dexterity: high magic crit and speed but low damage & mana
-   * magic mage high mana & extra spells but lower base damage and crit %
+    * strength: lower mana but high damage
+    * agility/dexterity: high magic crit and speed but low damage & mana
+    * magic mage high mana & extra spells but lower base damage and crit %
  * Archer:
-   * strength: high damage
-   * agi: high speed & crit
-   * mana: extra enchantment damage
+    * strength: high damage
+    * agi: high speed & crit
+    * mana: extra enchantment damage
 * 4 damage types:
  * Lightning > Water > Fire > Physical > Lightning
 * turn based combat
