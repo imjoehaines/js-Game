@@ -28,9 +28,9 @@
 * 4 damage types:
  * Physical - deals damage based on strength, mitigated by armour
  * Magic Types:
-   * Fire - deals large damage + DoT effects - damage based off strength
-   * Air - high speed and crit - damage based off agility
-   * Water - deals less damage but more utility + mana - damage based off magic
+    * Fire - deals large damage + DoT effects - damage based off strength
+    * Air - high speed and crit - damage based off agility
+    * Water - deals less damage but more utility + mana - damage based off magic
  * Fire > Air > Water > Fire
 * turn based combat
  * pokemon-esque
