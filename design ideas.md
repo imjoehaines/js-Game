@@ -1,7 +1,6 @@
 ####js Game ideas
 
 * Rogue-like
-* not grid-based
 * control a party that is randomly created at new game
 * races with different starting stats _**???**_
 * classes with different skills
