@@ -11,22 +11,27 @@
 * stats:
   * strength - boosts base attack damage and health
   * agi - boosts speed & crit
-  * magic  - boosts mana, gives extra spells 
+  * magic  - boosts mana, gives extra spells
 * every stat should be useful for every character
  * warrior:
     * strength: high damage, low speed & crit
     * agility: high crit & speed, lower damage
     * magic: extra "enchantment" damage - e.g. +x% fire/water/lightning damage
  * mage:
-    * strength: lower mana but high damage
-    * agility/dexterity: high magic crit and speed but low damage & mana
-    * magic mage high mana & extra spells but lower base damage and crit %
+    * strength: boosts fire skills - lower mana pool but high damage
+    * agility: boosts air skills - high magic crit and speed but low damage & mana
+    * magic: boosts water skills -  high mana & extra spells but lower base damage and crit %
  * Archer:
     * strength: high damage
     * agi: high speed & crit
     * mana: extra enchantment damage
 * 4 damage types:
- * Lightning > Water > Fire > Physical > Lightning
+ * Physical - deals damage based on strength, mitigated by armour
+ * Magic Types:
+   * Fire - deals large damage + DoT effects - damage based off strength
+   * Air - high speed and crit - damage based off agility
+   * Water - deals less damage but more utility + mana - damage based off magic
+ * Fire > Air > Water > Fire
 * turn based combat
  * pokemon-esque
  * limited number of skills per party member (3/4/6?)
