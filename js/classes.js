@@ -14,7 +14,7 @@ function Room(x, y, width, height) {
   this.brX = this.x + this.width
   this.brY = this.y + this.height
 
-  this.center = [Math.floor(this.y + this.brY) / 2, Math.floor(this.x + this.brY) / 2]
+  this.center = [Math.floor((this.y + this.brY) / 2), Math.floor((this.x + this.brX) / 2)]
 
   this.intersects = function(otherRoom) {
     return (this.x <= otherRoom.brX && this.brX >= otherRoom.x

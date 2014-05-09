@@ -9,6 +9,7 @@ var wallChar = "#"
 var map = [];
 var player = {};
 var playerSprite;
+var playerStartLoc;
 
 var sprites = {
   ".": "grass",
@@ -20,12 +21,16 @@ var spritesBlockMovement = [
   "#" // wall
 ]
 
+var allRooms = [];
+
 var PlayState = function(game) {  };
 PlayState.prototype = {
   preload: function() {
     jsGame.load.image("grass", "img/grass.png")
     jsGame.load.image("grassAlt", "img/grassAlt.png")
     jsGame.load.image("wall", "img/wall.png")
+    jsGame.load.image("hcor", "img/hCor.png")
+    jsGame.load.image("vcor", "img/vCor.png")
 
     jsGame.load.image("player", "img/paladin.gif")
   },
@@ -83,14 +88,16 @@ function makeMap() {
     map.push(newRow);
   }
 
+  generateRooms()
 
+}
+
+function generateRooms() {
   // Room(x, y, width, height)
-
   // attempt to place rooms
   var minRoomSize = 3;
   var maxRoomSize = 10;
-  var maxRooms = 20;
-  var allRooms = [];
+  var maxRooms = randomBetween(5,20);
   var x = 0
   var y = 0
   var width = 0 
@@ -107,24 +114,58 @@ function makeMap() {
 
     allRooms.push(newRoom)
 
+    if (i == 0) {
+      playerStartLoc = [newRoom.y, newRoom.x]
+    }
+
   }
 
   for (var i = 0; i < allRooms.length; i++) {
     var curRoom = allRooms[i]
-    for (var y = curRoom.y; y < curRoom.brY; y++){
-      for (var x = curRoom.x; x < curRoom.brX; x++){
+    for (var y = curRoom.y; y < curRoom.brY; y++) {
+      for (var x = curRoom.x; x < curRoom.brX; x++) {
         if (randomBetween(1,100) > 97) 
           map[y][x] = grassAltChar
         else
           map[y][x] = grassChar
       }
     }
+  
+    if (i > 0) {
+      var curCenter = allRooms[i].center
+      var prevCenter = allRooms[i-1].center
+
+      if (Math.round(Math.random()) == 1) {
+        hCorridors(prevCenter[1], curCenter[1], prevCenter[0])
+        vCorridors(prevCenter[0], curCenter[0], curCenter[1])
+      }
+      else {
+        vCorridors(prevCenter[0], curCenter[0], prevCenter[1])
+        hCorridors(prevCenter[1], curCenter[1], curCenter[0])
+      }
+
+    }
+
   }
-
-
 }
 
+function hCorridors(x1, x2, y) {
+  for (i = Math.min(x1, x2); i < Math.max(x1, x2) +1; i++) {
+    if (randomBetween(1,100) > 97) 
+      map[y][i] = grassAltChar
+    else
+      map[y][i] = grassChar
+  }
+}
 
+function vCorridors(y1, y2, x) {
+  for (i = Math.min(y1, y2); i < Math.max(y1, y2) +1; i++) {
+    if (randomBetween(1,100) > 97) 
+      map[i][x] = grassAltChar
+    else
+      map[i][x] = grassChar
+  }
+}
 
 function drawMap() {
   for (var y = 0; y < NoRows; y++)
@@ -139,8 +180,8 @@ function drawMap() {
 
 function initPlayer() {
   player = {
-    x: 1,
-    y: 1,
+    x: playerStartLoc[1],
+    y: playerStartLoc[0],
     hp: 50
   }
 
@@ -166,6 +207,6 @@ function blocksMovement(tile) {
   // looks through array and returns if there is 0 or more
   // occurences of the given tile (i.e. it's in the array)
 
-  //return (spritesBlockMovement.indexOf(tile) > -1)
-  return false // for testing allow movement anywhere 
+  return (spritesBlockMovement.indexOf(tile) > -1)
+  //return false // for testing allow movement anywhere 
 }
