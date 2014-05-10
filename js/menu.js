@@ -1,6 +1,7 @@
 var MenuState = function() {  };
 MenuState.prototype = {
   preload: function() {
+    jsGame.stage.smoothed = false;
 
     menuItems = [
       "A GAME",

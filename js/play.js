@@ -1,6 +1,9 @@
 var TileSize = 32
 var NoColumns = 1600 / TileSize
 var NoRows = 1280 / TileSize
+var running = false
+
+var fightTransition = {}
 
 var grassChar = "."
 var grassAltChar = ","
@@ -44,8 +47,8 @@ PlayState.prototype = {
 
     if (!playStateInfo.hasOwnProperty("map")) {
       makeMap()
-      placeEnemies()
       initPlayer()
+      placeEnemies()
     }
 
     drawMap()
@@ -59,20 +62,27 @@ PlayState.prototype = {
       })
     enemyCountText.anchor.setTo(0.5, 0.5);
     enemyCountText.fixedToCamera = true
+
+    running = true
   },
 
   update:  function() {
-      enemyCountText.text = allEnemies.length + " orcs left"
-      enemyCountText.update
+    if (running) {
+      if (allEnemies) {
+        enemyCountText.text = allEnemies.length + " orcs left"
+        enemyCountText.update
+        if (allEnemies.length == 0) {
+          running = false
+          gameOver()
+        }
+      }
+      if (fightTransition.width > 0 && fightTransition.alpha < 1) {
+        fightTransition.alpha += 0.02
+      }
+    }
   },
 
-  shutdown: function() {
-    playStateInfo = {
-      "map": map,
-      "player": player,
-      "allEnemies": allEnemies
-    }
-  }
+  shutdown: function() {}
 }
 
 function onKeyPress(event) {
@@ -94,7 +104,7 @@ function onKeyPress(event) {
     hadTurn = true
   }
   else if (event.keyCode == Phaser.Keyboard.SPACEBAR) {
-    hadTurn=true
+    hadTurn = true
   }
 
   if (hadTurn)
@@ -285,8 +295,39 @@ function attackOther(actor, other) {
     }
   }
 
+  jsGame.camera.follow(null)
+
   jsGame.input.keyboard.addCallbacks(null, null, null);
-  jsGame.state.start("fight");
+
+  var fill = jsGame.add.bitmapData(800, 640);
+  
+  fill.ctx.beginPath();
+  fill.ctx.rect(0,0,800,640);
+  fill.ctx.fillStyle = "#eeeeee";
+  fill.ctx.fill();
+
+  fightTransition = jsGame.add.sprite(jsGame.camera.x, jsGame.camera.y, fill)
+  fightTransition.width = 800;
+  fightTransition.height = 640;
+  fightTransition.alpha = 0
+
+  player.sprite.bringToTop()
+  fightStateInfo.enemy.sprite.bringToTop()
+
+  jsGame.add.tween(player.sprite.scale).to({ x: 6, y: 6 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
+  jsGame.add.tween(player.sprite).to({ x: jsGame.camera.x + 32, y: jsGame.camera.y + 400 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
+  jsGame.add.tween(fightStateInfo.enemy.sprite.scale).to({ x: 6, y: 6 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
+  jsGame.add.tween(fightStateInfo.enemy.sprite).to({ x: jsGame.camera.x + 544, y: jsGame.camera.y + 32 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
+  
+  playStateInfo = {
+    "map": map,
+    "player": player,
+    "allEnemies": allEnemies
+  }
+
+  setTimeout(function() {
+    jsGame.state.start("fight");
+  }, 1750)
 }
 
 function updateActor(actor) {
@@ -295,9 +336,16 @@ function updateActor(actor) {
 }
 
 function gameOver() {
-  player.sprite.destroy()
+  // get rid of some variables
+  delete playStateInfo.map
+  delete playStateInfo.allEnemies
+  delete playStateInfo.player
+  allEnemies = []
+  allRooms = []
+  map = []
+  player = null
 
-  var text = "You Died :(\nRIP in Pepperonis";
+  var text = "You Tripped and Died :(\nRIP in Pepperonis";
   var style = {
     font: "60px Arial",
     fill: "#ff0000",
