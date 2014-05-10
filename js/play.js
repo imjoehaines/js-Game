@@ -9,10 +9,10 @@ var wallChar = "#"
 var map = [];
 
 var player = {};
-var playerSprite;
 var playerStartLoc;
 
 var allEnemies = []
+var enemyCountText;
 
 var sprites = {
   ".": "grass",
@@ -32,8 +32,6 @@ PlayState.prototype = {
     jsGame.load.image("grass", "img/grass.png")
     jsGame.load.image("grassAlt", "img/grassAlt.png")
     jsGame.load.image("wall", "img/wall.png")
-    jsGame.load.image("hcor", "img/hCor.png")
-    jsGame.load.image("vcor", "img/vCor.png")
 
     jsGame.load.image("player", "img/paladin.gif")
     jsGame.load.image("orc", "img/orc.gif")
@@ -52,11 +50,24 @@ PlayState.prototype = {
     placeEnemies()
     drawEnemies()
 
-    jsGame.camera.follow(playerSprite, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
+    jsGame.camera.follow(player.sprite, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
+    enemyCountText = jsGame.add.text(66, 24, "Orcs left", {
+        font: "24px Arial",
+        fill: "#000000"
+      })
+    enemyCountText.anchor.setTo(0.5, 0.5);
+    enemyCountText.fixedToCamera = true
   },
 
   update:  function() {
-    jsGame.debug.cameraInfo(jsGame.camera, 32, 32);
+      enemyCountText.text = allEnemies.length + " orcs left"
+      enemyCountText.update
+  },
+
+  shutdown: function() {
+    map = []
+    allEnemies = []
+    allRooms = []
   }
 }
 
@@ -77,6 +88,9 @@ function onKeyPress(event) {
   else if(event.keyCode == Phaser.Keyboard.LEFT){
     player.moveTo(player.x - 1, player.y)
     hadTurn = true
+  }
+  else if (event.keyCode == Phaser.Keyboard.SPACEBAR) {
+    hadTurn=true
   }
 
   if (hadTurn)
@@ -189,9 +203,8 @@ function drawMap() {
 }
 
 function initPlayer() {
-  player = new Player(playerStartLoc[1], playerStartLoc[0], 50)
-
-  playerSprite = jsGame.add.sprite(player.x * TileSize, player.y * TileSize, "player");
+  player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 5, 5, 5)
+  player.sprite = jsGame.add.sprite(player.x * TileSize, player.y * TileSize, "player");
 }
 
 function blocksMovement(tile) {
@@ -207,8 +220,8 @@ function placeEnemies() {
   for (var y = 0; y < NoRows; y++)
     for (var x = 0; x < NoColumns; x++)
       if (map[y][x] == grassChar && !(x == player.x && y == player.y)) 
-        if (randomBetween(1, 100) > 97) {
-          var newEnemy = new Enemy(x, y, 50)
+        if (randomBetween(1, 100) > 98) {
+          var newEnemy = new Actor(x, y, "enemy", 50, 5,5,5)
           allEnemies.push(newEnemy)
         }
 }
@@ -231,39 +244,8 @@ function enemyTurn() {
       enemy.moveTo(enemy.x, enemy.y - 1)
     else if (dirChoice == 4)
       enemy.moveTo(enemy.x, enemy.y + 1)
-    updateEnemy(enemy)
+    //updateActor(enemy)
   }
-}
-
-function updatePlayer() {
-  playerSprite.x = player.x * TileSize
-  playerSprite.y = player.y * TileSize
-}
-
-function updateEnemy(enemy) {
-  enemy.sprite.x = enemy.x * TileSize
-  enemy.sprite.y = enemy.y * TileSize
-}
-
-function attackPlayer() {
-  //playerSprite.destroy()
-
-  var text = "You Died :(\nRIP in Pepperonis";
-  var style = {
-    font: "60px Arial",
-    fill: "#ff0000",
-    align: "center",
-    stroke: "#000",
-    strokeThickness: 4
-  };
-  var cameraCenterX = jsGame.camera.width/2
-  var cameraCenterY = jsGame.camera.height/2
-  var t = jsGame.add.text(cameraCenterX, cameraCenterY, text, style);
-  t.anchor.setTo(0.5, 0.5);
-  t.fixedToCamera = true;
-  setTimeout(function(){t.destroy()}, 2500)
-
-  //jsGame.input.keyboard.addCallbacks(null, null, null);
 }
 
 function attackEnemy() {
@@ -273,7 +255,7 @@ function attackEnemy() {
       allEnemies.splice(i, 1)
 
       var msgs = [
-        "Wow, they probably had\na family.",
+        "Wow, they probably had a family.",
         "Murderer!",
         "You heartless bastard",
         "How could you?",
@@ -281,7 +263,7 @@ function attackEnemy() {
         "I hope you're happy now",
         "What's wrong with you!?"
       ]
-      var text = msgs[randomBetween(1, msgs.length)]
+      var text = msgs[randomBetween(0, msgs.length - 1)]
       var style = {
         font: "24px Arial",
         fill: "#000000",
@@ -296,4 +278,91 @@ function attackEnemy() {
       setTimeout(function(){t.destroy()}, 750)
     }
   }
+}
+
+function collideWithOther(futureX, futureY) {
+  for (var i = 0; i < allEnemies.length; i++) {
+    if (futureX == allEnemies[i].x && futureY == allEnemies[i].y) {
+      return allEnemies[i]
+    }
+    else if (futureX == player.x && futureY == player.y) {
+      return player
+    }
+  }
+}
+
+function otherIsHostile(actor, other) {
+  if (other) {
+    if (actor.faction != other.faction)
+      return true
+    else
+      return false
+  }
+}
+
+function attackOther(actor, other) {
+  if (other == player) {
+    gameOver()
+  }
+  else {
+    other.sprite.destroy()
+    var index = allEnemies.indexOf(other)
+    allEnemies.splice(index, 1)
+
+    var msgs = [
+      "Wow, they probably had a family.",
+      "Murderer!",
+      "You heartless bastard",
+      "How could you?",
+      "That was a five year old.",
+      "I hope you're happy now",
+      "What's wrong with you!?"
+    ]
+    var text = msgs[randomBetween(0, msgs.length - 1)]
+    var style = {
+      font: "24px Arial",
+      fill: "#000000",
+      align: "center"
+    };
+    var cameraCenterX = jsGame.camera.width/2
+    var cameraCenterY = jsGame.camera.height/2
+    var t = jsGame.add.text(cameraCenterX, cameraCenterY, text, style);
+    t.anchor.setTo(0.5, 0.5);
+    t.fixedToCamera = true;
+
+    setTimeout(function(){t.destroy()}, 750)
+  }
+}
+
+function updateActor(actor) {
+  actor.sprite.x = actor.x * TileSize
+  actor.sprite.y = actor.y * TileSize
+}
+
+
+function gameOver() {
+  player.sprite.destroy()
+
+  var text = "You Died :(\nRIP in Pepperonis";
+  var style = {
+    font: "60px Arial",
+    fill: "#ff0000",
+    align: "center",
+    stroke: "#000",
+    strokeThickness: 4
+  };
+  var cameraCenterX = jsGame.camera.width/2
+  var cameraCenterY = jsGame.camera.height/2
+  var t = jsGame.add.text(cameraCenterX, cameraCenterY, text, style);
+  t.anchor.setTo(0.5, 0.5);
+  t.fixedToCamera = true;
+  
+  jsGame.input.keyboard.addCallbacks(null, null, null);
+
+  setTimeout(function() {
+    t.destroy();
+    jsGame.camera.reset();
+    jsGame.state.start("menu");
+  }, 2500)
+
 }

@@ -22,39 +22,36 @@ function Room(x, y, width, height) {
   }
 }
 
-function Enemy(x, y, hp) {
+function Actor(x, y, faction, hp, strength, agility, magic) {
   this.x = x
   this.y = y
+  this.faction = faction
   this.hp = hp
+  this.strength = strength
+  this.agility = agility
+  this.magic = magic
 
   this.moveTo = function(x, y) {
     if (!blocksMovement(map[y][x])) {     
-      this.y = y
-      this.x = x
-
-      if (y == player.y && x == player.x) {
-        attackPlayer()
+      var other = collideWithOther(x, y);
+      var isHostile = otherIsHostile(this, other)
+      
+      if (other) { // if there's a collision
+        if (isHostile) { // if the other is hostile
+          attackOther(this, other)
+          this.y = y
+          this.x = x
+          updateActor(this)
+        }
+        else { // if collision & not hostile
+          return // don't move
+        }
       }
-
-      updateEnemy(this)
-    }
-  }
-
-}
-
-function Player(x, y, hp) {
-  this.x = x
-  this.y = y
-  this.hp = hp
-
-  this.moveTo = function(x, y) {
-    if (!blocksMovement(map[y][x])) {     
-      this.y = y
-      this.x = x
-
-      updatePlayer()
-    }
-
-    attackEnemy()
-  }
+      else {
+        this.y = y
+        this.x = x
+        updateActor(this)
+      }
+    }  
+  }  
 }
