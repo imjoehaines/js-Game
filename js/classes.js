@@ -38,20 +38,21 @@ function Actor(x, y, faction, hp, strength, agility, magic) {
       
       if (other) { // if there's a collision
         if (isHostile) { // if the other is hostile
-          attackOther(this, other)
-          this.y = y
+          attackOther(this, other) // kill them
+          this.y = y // move
           this.x = x
-          updateActor(this)
+          updateActor(this) // update sprite
         }
         else { // if collision & not hostile
           return // don't move
         }
       }
-      else {
+      else { // no collision - just move
         this.y = y
         this.x = x
         updateActor(this)
       }
-    }  
-  }  
+    }
+  } //moveTo
+
 }
