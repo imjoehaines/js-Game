@@ -65,9 +65,11 @@ PlayState.prototype = {
   },
 
   shutdown: function() {
-    map = []
-    allEnemies = []
-    allRooms = []
+    playStateInfo = {
+      "map": map,
+      "player": player,
+      "allEnemies": allEnemies
+    }
   }
 }
 
@@ -215,7 +217,7 @@ function placeEnemies() {
     for (var x = 0; x < NoColumns; x++)
       if (map[y][x] == grassChar && !(x == player.x && y == player.y)) 
         if (randomBetween(1, 100) > 98) {
-          var newEnemy = new Actor(x, y, "enemy", 50, 5,5,5)
+          var newEnemy = new Actor(x, y, "enemy", 50, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
           allEnemies.push(newEnemy)
         }
 }
@@ -265,37 +267,21 @@ function otherIsHostile(actor, other) {
 }
 
 function attackOther(actor, other) {
-  if (other == player) {
-    gameOver()
+  if (actor == player) {
+    fightStateInfo = {
+      "player": actor,
+      "enemy": other
+    }
   }
   else {
-    other.sprite.destroy()
-    var index = allEnemies.indexOf(other)
-    allEnemies.splice(index, 1)
-
-    var msgs = [
-      "Wow, they probably had a family.",
-      "Murderer!",
-      "You heartless bastard",
-      "How could you?",
-      "That was a five year old.",
-      "I hope you're happy now",
-      "What's wrong with you!?"
-    ]
-    var text = msgs[randomBetween(0, msgs.length - 1)]
-    var style = {
-      font: "24px Arial",
-      fill: "#000000",
-      align: "center"
-    };
-    var cameraCenterX = jsGame.camera.width/2
-    var cameraCenterY = jsGame.camera.height/2
-    var t = jsGame.add.text(cameraCenterX, cameraCenterY, text, style);
-    t.anchor.setTo(0.5, 0.5);
-    t.fixedToCamera = true;
-
-    setTimeout(function(){t.destroy()}, 750)
+    fightStateInfo = {
+      "player": other,
+      "enemy": actor
+    }
   }
+
+  jsGame.input.keyboard.addCallbacks(null, null, null);
+  jsGame.state.start("fight");
 }
 
 function updateActor(actor) {
