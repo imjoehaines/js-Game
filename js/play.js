@@ -101,13 +101,7 @@ function makeMap() {
   for (var y = 0; y < NoRows; y++) {
     var newRow = [];
     for (var x = 0; x < NoColumns; x++) {
-      // make edges of map always a wall
-      if (y == 0 || y == NoRows - 1 || x == 0 || x == NoColumns - 1) 
-        newRow.push(wallChar)
-      //else if (Math.random() > 0.95)
-      //  newRow.push(grassAltChar)
-      else
-        newRow.push(wallChar);
+       newRow.push(wallChar);
     }
     map.push(newRow);
   }
@@ -124,14 +118,14 @@ function generateRooms() {
   var maxRooms = randomBetween(5,20);
   var x = 0
   var y = 0
-  var width = 0 
+  var width = 0
   var height = 0
 
   for (var i = 0; i < maxRooms; i++) {
     width = randomBetween(minRoomSize, maxRoomSize)
     height = randomBetween(minRoomSize, maxRoomSize)
-    x = randomBetween(1, NoColumns - 10)
-    y = randomBetween(1, NoRows - 10)
+    x = randomBetween(1, NoColumns - (maxRoomSize + 1)) //make sure cannot be at edge of map
+    y = randomBetween(1, NoRows - (maxRoomSize + 1)) 
 
     var failed = false
     var newRoom = new Room(x, y, width, height)
@@ -244,56 +238,26 @@ function enemyTurn() {
       enemy.moveTo(enemy.x, enemy.y - 1)
     else if (dirChoice == 4)
       enemy.moveTo(enemy.x, enemy.y + 1)
-    //updateActor(enemy)
-  }
-}
-
-function attackEnemy() {
-  for (var i = 0; i < allEnemies.length; i++) {
-    if (player.x == allEnemies[i].x && player.y == allEnemies[i].y) {
-      allEnemies[i].sprite.destroy()
-      allEnemies.splice(i, 1)
-
-      var msgs = [
-        "Wow, they probably had a family.",
-        "Murderer!",
-        "You heartless bastard",
-        "How could you?",
-        "That was a five year old.",
-        "I hope you're happy now",
-        "What's wrong with you!?"
-      ]
-      var text = msgs[randomBetween(0, msgs.length - 1)]
-      var style = {
-        font: "24px Arial",
-        fill: "#000000",
-        align: "center"
-      };
-      var cameraCenterX = jsGame.camera.width/2
-      var cameraCenterY = jsGame.camera.height/2
-      var t = jsGame.add.text(cameraCenterX, cameraCenterY, text, style);
-      t.anchor.setTo(0.5, 0.5);
-      t.fixedToCamera = true;
-
-      setTimeout(function(){t.destroy()}, 750)
-    }
   }
 }
 
 function collideWithOther(futureX, futureY) {
-  for (var i = 0; i < allEnemies.length; i++) {
-    if (futureX == allEnemies[i].x && futureY == allEnemies[i].y) {
-      return allEnemies[i]
-    }
-    else if (futureX == player.x && futureY == player.y) {
-      return player
+  // if the player is at the furtureX & futureY corrds
+  if (futureX == player.x && futureY == player.y) {
+    return player
+  }
+  else { // check each enemy's location 
+    for (var i = 0; i < allEnemies.length; i++) {
+      if (futureX == allEnemies[i].x && futureY == allEnemies[i].y) {
+        return allEnemies[i]
+      }
     }
   }
 }
 
 function otherIsHostile(actor, other) {
-  if (other) {
-    if (actor.faction != other.faction)
+  if (other) { // may be called without another actor
+    if (actor.faction != other.faction) // if the two are on opposing factions
       return true
     else
       return false
@@ -338,7 +302,6 @@ function updateActor(actor) {
   actor.sprite.x = actor.x * TileSize
   actor.sprite.y = actor.y * TileSize
 }
-
 
 function gameOver() {
   player.sprite.destroy()
