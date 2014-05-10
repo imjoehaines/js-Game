@@ -41,14 +41,16 @@ PlayState.prototype = {
     jsGame.world.setBounds(0, 0, 1600, 1280);
 
     jsGame.input.keyboard.addCallbacks(null, onKeyPress, null);
-    
-    makeMap()  
+
+    if (!playStateInfo.hasOwnProperty("map")) {
+      makeMap()
+      placeEnemies()
+      initPlayer()
+    }
+
     drawMap()
-
-    initPlayer()
-
-    placeEnemies()
     drawEnemies()
+    drawPlayer()
 
     jsGame.camera.follow(player.sprite, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
     enemyCountText = jsGame.add.text(66, 24, "Orcs left", {
@@ -200,6 +202,9 @@ function drawMap() {
 
 function initPlayer() {
   player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 5, 5, 5)
+}
+
+function drawPlayer() {
   player.sprite = jsGame.add.sprite(player.x * TileSize, player.y * TileSize, "player");
 }
 
