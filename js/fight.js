@@ -28,10 +28,26 @@ FightState.prototype = {
   preload: function() {
     jsGame.load.image("player", "img/paladin.gif")
     jsGame.load.image("orc", "img/orc.gif")
+    jsGame.load.image("grass", "img/grass.png")
+    jsGame.load.image("grass", "img/grassAlt.png")
   },
 
   create: function() {
     jsGame.world.setBounds(0, 0, 800, 640);
+
+    var background = jsGame.add.group()
+    var bgCoords = [[0, 0], [0, 320], [400, 0], [400,320]]
+    var bgSpriteChoice = "grassAlt"
+    for (var i = 0; i < 4; i ++) {
+      if (i == 1)
+        bgSpriteChoice = "grassAlt"
+      else
+        bgSpriteChoice = "grass"
+
+      var bgSprite = jsGame.add.sprite(bgCoords[i][0], bgCoords[i][1], bgSpriteChoice)
+      bgSprite.width = 400
+      bgSprite.height = 320
+    }
 
     player = fightStateInfo.player
     enemy = fightStateInfo.enemy
@@ -171,5 +187,8 @@ function killEnemy() {
 }
 
 function updateHP(actor) {
-  actor.hpText.text = "HP: " + actor.hp
+  if (actor.hp == 0)
+    actor.hpText.text = "DEAD :("
+  else
+    actor.hpText.text = "HP: " + actor.hp
 }

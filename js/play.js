@@ -299,7 +299,7 @@ function attackOther(actor, other) {
 
   jsGame.input.keyboard.addCallbacks(null, null, null);
 
-  var fill = jsGame.add.bitmapData(800, 640);
+  /*var fill = jsGame.add.bitmapData(800, 640);
   
   fill.ctx.beginPath();
   fill.ctx.rect(0,0,800,640);
@@ -309,7 +309,33 @@ function attackOther(actor, other) {
   fightTransition = jsGame.add.sprite(jsGame.camera.x, jsGame.camera.y, fill)
   fightTransition.width = 800;
   fightTransition.height = 640;
-  fightTransition.alpha = 0
+  fightTransition.alpha = 0*/
+
+  var background = jsGame.add.group()
+  var bgCoords = [
+    [jsGame.camera.x, jsGame.camera.y],
+    [jsGame.camera.x, jsGame.camera.y + 320],
+    [jsGame.camera.x + 400, jsGame.camera.y],
+    [jsGame.camera.x + 400, jsGame.camera.y + 320]
+  ]
+
+  var bgSpriteChoice = "grassAlt"
+  for (var i = 0; i < 4; i ++) {
+    if (i == 1)
+      bgSpriteChoice = "grassAlt"
+    else
+      bgSpriteChoice = "grass"
+
+
+    //jsGame.camera.x + (jsGame.camera.width/2), jsGame.camera.y + (jsGame.camera.height/2)
+    var bgSprite = jsGame.add.sprite(player.x * 32, player.y * 32, bgSpriteChoice)
+    //bgSprite.width = 400
+    //bgSprite.height = 320
+
+    jsGame.add.tween(bgSprite).to({ width: 400, height: 320},1748, Phaser.Easing.Quadratic.InOut, true, 0).start()
+
+    jsGame.add.tween(bgSprite).to({ x: bgCoords[i][0], y: bgCoords[i][1] },1748, Phaser.Easing.Quadratic.InOut, true, 0).start()
+  }
 
   player.sprite.bringToTop()
   fightStateInfo.enemy.sprite.bringToTop()
@@ -318,7 +344,7 @@ function attackOther(actor, other) {
   jsGame.add.tween(player.sprite).to({ x: jsGame.camera.x + 32, y: jsGame.camera.y + 400 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
   jsGame.add.tween(fightStateInfo.enemy.sprite.scale).to({ x: 6, y: 6 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
   jsGame.add.tween(fightStateInfo.enemy.sprite).to({ x: jsGame.camera.x + 544, y: jsGame.camera.y + 32 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
-  
+
   playStateInfo = {
     "map": map,
     "player": player,
