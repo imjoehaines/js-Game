@@ -232,7 +232,7 @@ function placeEnemies() {
     for (var x = 0; x < NoColumns; x++)
       if (map[y][x] == grassChar && !(x == player.x && y == player.y)) 
         if (randomBetween(1, 100) > 98) {
-          var newEnemy = new Actor(x, y, "enemy", 50, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
+          var newEnemy = new Actor(x, y, "enemy", 3, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
           allEnemies.push(newEnemy)
         }
 }
