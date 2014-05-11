@@ -10,6 +10,7 @@ var indicatorText;
 var combatText;
 
 var canAttack;
+var combatOver;
 
 var monoStyle = {
   font: "24px monospace",
@@ -30,6 +31,28 @@ FightState.prototype = {
     jsGame.load.image("orc", "img/orc.gif")
     jsGame.load.image("grass", "img/grass.png")
     jsGame.load.image("grass", "img/grassAlt.png")
+
+    jsGame.load.audio("hurt1", "sfx/hurt/1.wav")
+    jsGame.load.audio("hurt2", "sfx/hurt/2.wav")
+    jsGame.load.audio("hurt3", "sfx/hurt/3.wav")
+    jsGame.load.audio("hurt4", "sfx/hurt/4.wav")
+    jsGame.load.audio("hurt5", "sfx/hurt/5.wav")
+    jsGame.load.audio("hurt6", "sfx/hurt/6.wav")
+    jsGame.load.audio("attack1", "sfx/attack/1.wav")
+    jsGame.load.audio("attack2", "sfx/attack/2.wav")
+    jsGame.load.audio("attack3", "sfx/attack/3.wav")
+    jsGame.load.audio("attack4", "sfx/attack/4.wav")
+    jsGame.load.audio("attack5", "sfx/attack/5.wav")
+    jsGame.load.audio("attack6", "sfx/attack/6.wav")
+    jsGame.load.audio("attack7", "sfx/attack/7.wav")
+    jsGame.load.audio("attack8", "sfx/attack/8.wav")
+    jsGame.load.audio("attack9", "sfx/attack/9.wav")
+    jsGame.load.audio("attack10", "sfx/attack/10.wav")
+
+    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav")
+    jsGame.load.audio("enemyDeathHit", "sfx/enemyDeathHit.wav")
+
+    jsGame.load.audio("fightWin", "sfx/fightWin.wav")
   },
 
   create: function() {
@@ -94,9 +117,15 @@ FightState.prototype = {
     jsGame.input.keyboard.addCallbacks(null, fightKeyPress, null);
 
      canAttack = true
+     combatOver = false
   },
 
-  update: function() {},
+  update: function() {
+    if (combatOver) {
+      canAttack = false
+      disableMenus()
+    }
+  },
 
   shutdown: function() {}
 }
@@ -128,17 +157,14 @@ function confirmCommand() {
 
   }
   else {
-    attackEnemy()
     canAttack = false
-    indicatorText.alpha = 0
-    indicatorText.selectedTween.pause()
-    attackText.alpha = 0.25
+    attackEnemy()
+    disableMenus()
   }
 
   setTimeout(function() {
     canAttack = true
-    indicatorText.selectedTween.resume()
-    attackText.alpha = 1
+    enableMenus()
   }, 1000)
 }
 
@@ -146,31 +172,48 @@ function attackEnemy() {
   playerIdle.pause()
   enemyIdle.pause()
 
-  var attack = jsGame.add.tween(player.sprite).to({ x: enemy.sprite.x - 64, y: enemy.sprite.y + 64 },
-    330, Phaser.Easing.Back.Out, true, 0, 0, true)
+  enemy.hp -= 1
+  updateHP(enemy)
 
-  var reaction = jsGame.add.tween(enemy.sprite).to({ x: enemy.sprite.x + 32, y: enemy.sprite.y - 32 },
-    200, Phaser.Easing.Circular.InOut, true, 70, 0, true)
+  var attack = jsGame.add.tween(player.sprite).to({ x: enemy.sprite.x - 64, y: enemy.sprite.y + 64 },
+    500, Phaser.Easing.Back.Out, true, 0, 0, true)
 
   player.sprite.bringToTop()
 
-  attack.onComplete.add(function() {playerIdle.resume()}, null)
-  reaction.onComplete.add(function() {enemyIdle.resume()}, null)
+  attack.onComplete.add(function() { playerIdle.resume() }, null)
 
-  enemy.hp -= 1
-  updateHP(enemy)
-  
-  if (enemy.hp == 0) {
+  if (enemy.hp > 0) {
+    var reaction = jsGame.add.tween(enemy.sprite).to({ x: enemy.sprite.x + 32, y: enemy.sprite.y - 32 },
+      200, Phaser.Easing.Circular.InOut, true, 180, 0, true)
+
+    var attackSFX = jsGame.add.audio("attack" + randomBetween(1, 10))
+    var hurtSFX = jsGame.add.audio("hurt" + randomBetween(1, 6))
+    reaction.onStart.add(function() { hurtSFX.play(); attackSFX.play() }, null)
+    reaction.onComplete.add(function() { enemyIdle.resume() }, null)
+  }  
+  else {
     killEnemy()
   }
 }
 
 function killEnemy() {
   canAttack = false
+  combatOver = true
+
+  enemyDeathHitSFX = jsGame.add.audio("enemyDeathHit")
+  enemyDeathHitSFX.play()
+
+  enemyDeathSFX = jsGame.add.audio("enemyDeath")
+  enemyDeathSFX.play()
+
+  fightWinSFX = jsGame.add.audio("fightWin")
+  fightWinSFX.play()
+
   combatText = jsGame.add.text(jsGame.world.centerX, jsGame.world.centerY, "You Won!", style);
   combatText.anchor.setTo(0.5, 0.5)
 
   enemyIdle.stop()
+
   var dying1 = jsGame.add.tween(enemy.sprite.scale).to({ x: 0, y: 0 },
       2500, Phaser.Easing.Cubic.In, true, 0, 0, false)
   var dying2 = jsGame.add.tween(enemy.sprite).to({ angle: 360 },
@@ -188,7 +231,21 @@ function killEnemy() {
 
 function updateHP(actor) {
   if (actor.hp == 0)
-    actor.hpText.text = "DEAD :("
+    actor.hpText.setText("DEAD :(")
   else
-    actor.hpText.text = "HP: " + actor.hp
+    actor.hpText.setText("HP: " + actor.hp)
+}
+
+function disableMenus() {
+  indicatorText.alpha = 0
+  indicatorText.selectedTween.pause()
+  attackText.alpha = 0.25
+  runText.alpha = 0.25
+}
+
+function enableMenus() {
+  indicatorText.alpha = 1
+  indicatorText.selectedTween.resume()
+  attackText.alpha = 1
+  runText.alpha = 1
 }

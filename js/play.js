@@ -8,6 +8,13 @@ var fightTransition = {}
 var grassChar = "."
 var grassAltChar = ","
 var wallChar = "#"
+var wallhbChar = "_"
+var wallhtChar = "-"
+var wallh2Char = "="
+var wallvlChar = "l"
+var wallvrChar = "r"
+var wallvlvrChar = "|"
+var wallvlvrChar = "!"
 
 var map = [];
 
@@ -17,14 +24,30 @@ var playerStartLoc;
 var allEnemies = []
 var enemyCountText;
 
+var bgAudioTimeout;
+
 var sprites = {
   ".": "grass",
   ",": "grassAlt",
-  "#": "wall"
+  "#": "wall",
+  "_": "wall-hb",
+  "-": "wall-ht",
+  "=": "wall-h2",
+  "l": "wall-vl",
+  "r": "wall-vr",
+  "|": "wall-vlvr",
+  "!": "wall-v2"
 }
 
 var spritesBlockMovement = [
-  "#" // wall
+  "#", // wall
+  "_",
+  "-",
+  "=",
+  "l",
+  "r",
+  "|",
+  "!"
 ]
 
 var allRooms = [];
@@ -35,9 +58,38 @@ PlayState.prototype = {
     jsGame.load.image("grass", "img/grass.png")
     jsGame.load.image("grassAlt", "img/grassAlt.png")
     jsGame.load.image("wall", "img/wall.png")
+    jsGame.load.image("wall-hb", "img/wall-hb.png")
+    jsGame.load.image("wall-ht", "img/wall-ht.png")
+    jsGame.load.image("wall-h2", "img/wall-h2.png")
+    jsGame.load.image("wall-vl", "img/wall-vl.png")
+    jsGame.load.image("wall-vr", "img/wall-vr.png")
+    jsGame.load.image("wall-v2", "img/wall-v2.png")
 
     jsGame.load.image("player", "img/paladin.gif")
     jsGame.load.image("orc", "img/orc.gif")
+
+    jsGame.load.audio("bgLoop", "sfx/bg/loop.wav")
+    jsGame.load.audio("bird", "sfx/bg/bird.wav")
+    jsGame.load.audio("fabric", "sfx/bg/fabric.wav")
+    jsGame.load.audio("crack1", "sfx/bg/crack1.wav")
+    jsGame.load.audio("crack2", "sfx/bg/crack2.wav")
+    jsGame.load.audio("crack3", "sfx/bg/crack3.wav")
+    jsGame.load.audio("crack4", "sfx/bg/crack4.wav")
+    jsGame.load.audio("crack5", "sfx/bg/crack5.wav")
+    jsGame.load.audio("crack6", "sfx/bg/crack6.wav")
+    jsGame.load.audio("creak1", "sfx/bg/creak1.wav")
+    jsGame.load.audio("creak2", "sfx/bg/creak2.wav")
+    jsGame.load.audio("creak3", "sfx/bg/creak3.wav")
+    jsGame.load.audio("creak4", "sfx/bg/creak4.wav")
+    jsGame.load.audio("creak5", "sfx/bg/creak5.wav")
+    jsGame.load.audio("creak6", "sfx/bg/creak6.wav")
+    jsGame.load.audio("creak7", "sfx/bg/creak7.wav")
+    jsGame.load.audio("creak8", "sfx/bg/creak8.wav")
+    jsGame.load.audio("creak9", "sfx/bg/creak9.wav")
+    jsGame.load.audio("creak10", "sfx/bg/creak10.wav")
+
+    jsGame.load.audio("fightTransition", "sfx/fightTransition.wav")
+    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav")
   },
   
   create:  function() {
@@ -49,11 +101,14 @@ PlayState.prototype = {
       makeMap()
       initPlayer()
       placeEnemies()
+      //makeWallEdges()
     }
 
     drawMap()
     drawEnemies()
     drawPlayer()
+
+    backgroundNoise()
 
     jsGame.camera.follow(player.sprite, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
     enemyCountText = jsGame.add.text(66, 24, "Orcs left", {
@@ -121,7 +176,6 @@ function makeMap() {
   }
 
   generateRooms()
-
 }
 
 function generateRooms() {
@@ -154,6 +208,7 @@ function generateRooms() {
 
   for (var i = 0; i < allRooms.length; i++) {
     var curRoom = allRooms[i]
+
     for (var y = curRoom.y; y < curRoom.brY; y++) {
       for (var x = curRoom.x; x < curRoom.brX; x++) {
         if (randomBetween(1,100) > 97) 
@@ -162,12 +217,12 @@ function generateRooms() {
           map[y][x] = grassChar
       }
     }
-  
+
     if (i > 0) {
       var curCenter = allRooms[i].center
       var prevCenter = allRooms[i-1].center
 
-      if (Math.round(Math.random()) == 1) {
+      if (Math.random() > 0.5) {
         hCorridors(prevCenter[1], curCenter[1], prevCenter[0])
         vCorridors(prevCenter[0], curCenter[0], curCenter[1])
       }
@@ -177,12 +232,11 @@ function generateRooms() {
       }
 
     }
-
   }
 }
 
 function hCorridors(x1, x2, y) {
-  for (i = Math.min(x1, x2); i < Math.max(x1, x2) +1; i++) {
+  for (i = Math.min(x1, x2); i < Math.max(x1, x2) + 1; i++) {
     if (randomBetween(1,100) > 97) 
       map[y][i] = grassAltChar
     else
@@ -195,8 +249,60 @@ function vCorridors(y1, y2, x) {
     if (randomBetween(1,100) > 97) 
       map[i][x] = grassAltChar
     else
-      map[i][x] = grassChar
+      map[i][x] = grassChar 
   }
+}
+
+function makeWallEdges() {
+  for (var y = 0; y < map.length; y++) {
+    for (var x = 0; x < map[y].length; x++) {
+      var neighbours = grassNeighbours(y, x)
+      if (neighbours == "hb")
+        map[y-1][x] = wallhbChar
+      else if (neighbours == "ht")
+        map[y+1][x] = wallhtChar
+      else if (neighbours == "hthb") {
+        map[y-1][x] = wallhbChar
+        map[y+1][x] = wallhtChar
+      }
+      else if (neighbours == "h2")
+        map[y+1][x] = wallh2Char
+      else if (neighbours == "vl")
+        map[y][x+1] = wallvlChar
+      else if (neighbours == "vr")
+        map[y][x-1] = wallvrChar
+      else if (neighbours == "vlvr") {
+        map[y][x-1] = wallvrChar
+        map[y][x+1] = wallvlChar
+      }
+    }
+  }
+}
+
+function grassNeighbours(y, x) {
+  var neighbours;
+  neighbours = ""
+  if (y > 0 && y < 1280 && x > 0 && x < 1600) {
+    if (map[y][x] == grassChar || map[y][x] == grassAltChar) {
+      if (map[y+1][x] == wallChar && (map[y+2][x] == grassChar || map[y+2][x] == grassAltChar))
+        neighbours = "h2" //wall with grass on 2 sides 
+      else if (map[y+1][x] == wallChar && map[y-1][x] == wallChar)
+        neighbours = "hthb" //wall with grass above and below
+      else if (map[y][x+1] == wallChar && (map[y][x+2] == grassChar || map[y][x+2] == grassAltChar))
+        neighbours = "v2" //wall with grass left and right
+      else if (map[y][x+1] == wallChar && map[y][x-1] == wallChar)
+        neighbours = "vlvr" //wall with grass left and right
+      else if (map[y][x+1] == wallChar)
+        neighbours = "vl" //wall with grass on left
+      else if (map[y][x-1] == wallChar)
+        neighbours = "vr" // wall with grass on right
+      else if (map[y + 1][x] == wallChar)
+        neighbours = "ht" //wall with grass above
+      else if (map[y - 1][x] == wallChar)
+        neighbours = "hb" //wall with grass below
+    }
+  }
+  return neighbours
 }
 
 function drawMap() {
@@ -208,6 +314,18 @@ function drawMap() {
         jsGame.add.sprite(x * TileSize, y * TileSize, "grassAlt");
       else if (map[y][x] == wallChar)
         jsGame.add.sprite(x * TileSize, y * TileSize, "wall");
+      else if (map[y][x] == wallhbChar)
+        jsGame.add.sprite(x * TileSize, y * TileSize, "wall-hb");
+      else if (map[y][x] == wallhtChar)
+        jsGame.add.sprite(x * TileSize, y * TileSize, "wall-ht");
+      else if (map[y][x] == wallh2Char)
+        jsGame.add.sprite(x * TileSize, y * TileSize, "wall-h2");
+      else if (map[y][x] == wallvlChar)
+        jsGame.add.sprite(x * TileSize, y * TileSize, "wall-vl");
+      else if (map[y][x] == wallvrChar)
+        jsGame.add.sprite(x * TileSize, y * TileSize, "wall-vr");
+      else if (map[y][x] == wallv2Char)
+        jsGame.add.sprite(x * TileSize, y * TileSize, "wall-v2");
 }
 
 function initPlayer() {
@@ -295,21 +413,24 @@ function attackOther(actor, other) {
     }
   }
 
-  jsGame.camera.follow(null)
+  jsGame.camera.follow(null) // stop camera following the player
+  jsGame.input.keyboard.addCallbacks(null, null, null); //remove player input
 
-  jsGame.input.keyboard.addCallbacks(null, null, null);
+  fightTransitionSFX = jsGame.add.audio("fightTransition")
+  fightTransitionSFX.play() //start the transition music
 
-  /*var fill = jsGame.add.bitmapData(800, 640);
+  var fill = jsGame.add.bitmapData(800, 640);
   
   fill.ctx.beginPath();
   fill.ctx.rect(0,0,800,640);
-  fill.ctx.fillStyle = "#eeeeee";
+  fill.ctx.fillStyle = "#000000";
   fill.ctx.fill();
 
   fightTransition = jsGame.add.sprite(jsGame.camera.x, jsGame.camera.y, fill)
   fightTransition.width = 800;
   fightTransition.height = 640;
-  fightTransition.alpha = 0*/
+  fightTransition.alpha = 0
+  jsGame.add.tween(fightTransition).to({ alpha: 0.75 }, 1500, Phaser.Easing.Cubic.In, true, 0).start()
 
   var background = jsGame.add.group()
   var bgCoords = [
@@ -327,14 +448,10 @@ function attackOther(actor, other) {
       bgSpriteChoice = "grass"
 
 
-    //jsGame.camera.x + (jsGame.camera.width/2), jsGame.camera.y + (jsGame.camera.height/2)
     var bgSprite = jsGame.add.sprite(player.x * 32, player.y * 32, bgSpriteChoice)
-    //bgSprite.width = 400
-    //bgSprite.height = 320
 
-    jsGame.add.tween(bgSprite).to({ width: 400, height: 320},1748, Phaser.Easing.Quadratic.InOut, true, 0).start()
-
-    jsGame.add.tween(bgSprite).to({ x: bgCoords[i][0], y: bgCoords[i][1] },1748, Phaser.Easing.Quadratic.InOut, true, 0).start()
+    jsGame.add.tween(bgSprite).to({ width: 400, height: 320 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
+    jsGame.add.tween(bgSprite).to({ x: bgCoords[i][0], y: bgCoords[i][1] }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
   }
 
   player.sprite.bringToTop()
@@ -353,7 +470,7 @@ function attackOther(actor, other) {
 
   setTimeout(function() {
     jsGame.state.start("fight");
-  }, 1750)
+  }, 3500)
 }
 
 function updateActor(actor) {
@@ -388,9 +505,46 @@ function gameOver() {
   jsGame.input.keyboard.addCallbacks(null, null, null);
 
   setTimeout(function() {
+    bgAudioTimeout.clearTimeout()
     t.destroy();
     jsGame.camera.reset();
     jsGame.state.start("menu");
   }, 2500)
+
+}
+
+
+function backgroundNoise() {
+  //                                    vol  loop
+  var loop = jsGame.add.audio("bgLoop", 0.1, true)
+  loop.play()
+
+  var bgAudio = [
+    "bird",
+/*    "fabric",
+    "crack1",
+    "crack2",
+    "crack3",
+    "crack4",
+    "crack5",
+    "crack6",
+    "creak1",
+    "creak2",
+    "creak3",
+    "creak4",
+    "creak5",
+    "creak6",
+    "creak7",
+    "creak8",
+    "creak9",
+    "creak10"*/
+  ]
+
+  bgAudioTimeout = setInterval(function() {
+    var choice = randomBetween(0, bgAudio.length - 1)
+    console.log(choice + " | " + bgAudio[choice])
+    var bgAudioSFX = jsGame.add.audio(bgAudio[choice], 0.2)
+    bgAudioSFX.play()
+  }, 10000)
 
 }
