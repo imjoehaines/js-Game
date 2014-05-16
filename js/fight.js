@@ -27,53 +27,53 @@ var serifStyle = {
 var FightState = function() {  };
 FightState.prototype = {
   preload: function() {
-    jsGame.load.image("player", "img/paladin.gif")
-    jsGame.load.image("orc", "img/orc.gif")
-    jsGame.load.image("grass", "img/grass.png")
-    jsGame.load.image("grass", "img/grassAlt.png")
+    jsGame.load.image("player", "img/paladin.gif");
+    jsGame.load.image("orc", "img/orc.gif");
+    jsGame.load.image("grass", "img/grass.png");
+    jsGame.load.image("grass", "img/grassAlt.png");
 
-    jsGame.load.audio("hurt1", "sfx/hurt/1.wav")
-    jsGame.load.audio("hurt2", "sfx/hurt/2.wav")
-    jsGame.load.audio("hurt3", "sfx/hurt/3.wav")
-    jsGame.load.audio("hurt4", "sfx/hurt/4.wav")
-    jsGame.load.audio("hurt5", "sfx/hurt/5.wav")
-    jsGame.load.audio("hurt6", "sfx/hurt/6.wav")
-    jsGame.load.audio("attack1", "sfx/attack/1.wav")
-    jsGame.load.audio("attack2", "sfx/attack/2.wav")
-    jsGame.load.audio("attack3", "sfx/attack/3.wav")
-    jsGame.load.audio("attack4", "sfx/attack/4.wav")
-    jsGame.load.audio("attack5", "sfx/attack/5.wav")
-    jsGame.load.audio("attack6", "sfx/attack/6.wav")
-    jsGame.load.audio("attack7", "sfx/attack/7.wav")
-    jsGame.load.audio("attack8", "sfx/attack/8.wav")
-    jsGame.load.audio("attack9", "sfx/attack/9.wav")
-    jsGame.load.audio("attack10", "sfx/attack/10.wav")
+    jsGame.load.audio("hurt1", "sfx/hurt/1.wav");
+    jsGame.load.audio("hurt2", "sfx/hurt/2.wav");
+    jsGame.load.audio("hurt3", "sfx/hurt/3.wav");
+    jsGame.load.audio("hurt4", "sfx/hurt/4.wav");
+    jsGame.load.audio("hurt5", "sfx/hurt/5.wav");
+    jsGame.load.audio("hurt6", "sfx/hurt/6.wav");
+    jsGame.load.audio("attack1", "sfx/attack/1.wav");
+    jsGame.load.audio("attack2", "sfx/attack/2.wav");
+    jsGame.load.audio("attack3", "sfx/attack/3.wav");
+    jsGame.load.audio("attack4", "sfx/attack/4.wav");
+    jsGame.load.audio("attack5", "sfx/attack/5.wav");
+    jsGame.load.audio("attack6", "sfx/attack/6.wav");
+    jsGame.load.audio("attack7", "sfx/attack/7.wav");
+    jsGame.load.audio("attack8", "sfx/attack/8.wav");
+    jsGame.load.audio("attack9", "sfx/attack/9.wav");
+    jsGame.load.audio("attack10", "sfx/attack/10.wav");
 
-    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav")
-    jsGame.load.audio("enemyDeathHit", "sfx/enemyDeathHit.wav")
+    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav");
+    jsGame.load.audio("enemyDeathHit", "sfx/enemyDeathHit.wav");
 
-    jsGame.load.audio("fightWin", "sfx/fightWin.wav")
+    jsGame.load.audio("fightWin", "sfx/fightWin.wav");
   },
 
   create: function() {
     jsGame.world.setBounds(0, 0, 800, 640);
 
-    var background = jsGame.add.group()
-    var bgCoords = [[0, 0], [0, 320], [400, 0], [400,320]]
-    var bgSpriteChoice = "grassAlt"
+    var background = jsGame.add.group();
+    var bgCoords = [[0, 0], [0, 320], [400, 0], [400,320]];
+    var bgSpriteChoice = "grassAlt";
     for (var i = 0; i < 4; i ++) {
       if (i == 1)
-        bgSpriteChoice = "grassAlt"
+        bgSpriteChoice = "grassAlt";
       else
-        bgSpriteChoice = "grass"
+        bgSpriteChoice = "grass";
 
-      var bgSprite = jsGame.add.sprite(bgCoords[i][0], bgCoords[i][1], bgSpriteChoice)
-      bgSprite.width = 400
-      bgSprite.height = 320
+      var bgSprite = jsGame.add.sprite(bgCoords[i][0], bgCoords[i][1], bgSpriteChoice);
+      bgSprite.width = 400;
+      bgSprite.height = 320;
     }
 
-    player = fightStateInfo.player
-    enemy = fightStateInfo.enemy
+    player = fightStateInfo.player;
+    enemy = fightStateInfo.enemy;
 
     player.sprite = jsGame.add.sprite(32 * 4, 640 - (32 * 4), "player")
     player.sprite.scale.setTo(6, 6)
@@ -92,7 +92,7 @@ FightState.prototype = {
     player.hpText.anchor.setTo(0.5, 0.5);
 
     var text = "\nSTR: " + player.strength + "\nAGI: " + player.agility + "\nMAG: " + player.magic
-    
+
     playerStats = jsGame.add.text(32 * 9, player.hpText.y + 48, text, monoStyle);
     playerStats.anchor.setTo(0.5, 0.5);
 
@@ -100,7 +100,7 @@ FightState.prototype = {
     enemy.hpText.anchor.setTo(0.5, 0.5);
 
     text = "\nSTR: " + enemy.strength + "\nAGI: " + enemy.agility + "\nMAG: " + enemy.magic
-    
+
     enemyStats = jsGame.add.text(800 - (32*10), enemy.hpText.y + 48, text, monoStyle);
     enemyStats.anchor.setTo(0.5, 0.5);
 
@@ -190,7 +190,7 @@ function attackEnemy() {
     var hurtSFX = jsGame.add.audio("hurt" + randomBetween(1, 6))
     reaction.onStart.add(function() { hurtSFX.play(); attackSFX.play() }, null)
     reaction.onComplete.add(function() { enemyIdle.resume() }, null)
-  }  
+  }
   else {
     killEnemy()
   }
