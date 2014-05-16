@@ -12,6 +12,8 @@ var combatText;
 var canAttack;
 var combatOver;
 
+var fightMusic;
+
 var monoStyle = {
   font: "24px monospace",
   fill: "#000",
@@ -27,53 +29,53 @@ var serifStyle = {
 var FightState = function() {  };
 FightState.prototype = {
   preload: function() {
-    jsGame.load.image("player", "img/paladin.gif")
-    jsGame.load.image("orc", "img/orc.gif")
-    jsGame.load.image("grass", "img/grass.png")
-    jsGame.load.image("grass", "img/grassAlt.png")
+    jsGame.load.image("player", "img/paladin.gif");
+    jsGame.load.image("orc", "img/orc.gif");
+    jsGame.load.image("grass", "img/grass.png");
+    jsGame.load.image("grass", "img/grassAlt.png");
 
-    jsGame.load.audio("hurt1", "sfx/hurt/1.wav")
-    jsGame.load.audio("hurt2", "sfx/hurt/2.wav")
-    jsGame.load.audio("hurt3", "sfx/hurt/3.wav")
-    jsGame.load.audio("hurt4", "sfx/hurt/4.wav")
-    jsGame.load.audio("hurt5", "sfx/hurt/5.wav")
-    jsGame.load.audio("hurt6", "sfx/hurt/6.wav")
-    jsGame.load.audio("attack1", "sfx/attack/1.wav")
-    jsGame.load.audio("attack2", "sfx/attack/2.wav")
-    jsGame.load.audio("attack3", "sfx/attack/3.wav")
-    jsGame.load.audio("attack4", "sfx/attack/4.wav")
-    jsGame.load.audio("attack5", "sfx/attack/5.wav")
-    jsGame.load.audio("attack6", "sfx/attack/6.wav")
-    jsGame.load.audio("attack7", "sfx/attack/7.wav")
-    jsGame.load.audio("attack8", "sfx/attack/8.wav")
-    jsGame.load.audio("attack9", "sfx/attack/9.wav")
-    jsGame.load.audio("attack10", "sfx/attack/10.wav")
+    jsGame.load.audio("hurt1", "sfx/hurt/1.wav");
+    jsGame.load.audio("hurt2", "sfx/hurt/2.wav");
+    jsGame.load.audio("hurt3", "sfx/hurt/3.wav");
+    jsGame.load.audio("hurt4", "sfx/hurt/4.wav");
+    jsGame.load.audio("hurt5", "sfx/hurt/5.wav");
+    jsGame.load.audio("hurt6", "sfx/hurt/6.wav");
+    jsGame.load.audio("attack1", "sfx/attack/1.wav");
+    jsGame.load.audio("attack2", "sfx/attack/2.wav");
+    jsGame.load.audio("attack3", "sfx/attack/3.wav");
+    jsGame.load.audio("attack4", "sfx/attack/4.wav");
+    jsGame.load.audio("attack5", "sfx/attack/5.wav");
+    jsGame.load.audio("attack6", "sfx/attack/6.wav");
+    jsGame.load.audio("attack7", "sfx/attack/7.wav");
+    jsGame.load.audio("attack8", "sfx/attack/8.wav");
+    jsGame.load.audio("attack9", "sfx/attack/9.wav");
+    jsGame.load.audio("attack10", "sfx/attack/10.wav");
 
-    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav")
-    jsGame.load.audio("enemyDeathHit", "sfx/enemyDeathHit.wav")
+    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav");
+    jsGame.load.audio("enemyDeathHit", "sfx/enemyDeathHit.wav");
 
-    jsGame.load.audio("fightWin", "sfx/fightWin.wav")
+    jsGame.load.audio("fightWin", "sfx/fightWin.wav");
   },
 
   create: function() {
     jsGame.world.setBounds(0, 0, 800, 640);
 
-    var background = jsGame.add.group()
-    var bgCoords = [[0, 0], [0, 320], [400, 0], [400,320]]
-    var bgSpriteChoice = "grassAlt"
+    var background = jsGame.add.group();
+    var bgCoords = [[0, 0], [0, 320], [400, 0], [400,320]];
+    var bgSpriteChoice = "grassAlt";
     for (var i = 0; i < 4; i ++) {
       if (i == 1)
-        bgSpriteChoice = "grassAlt"
+        bgSpriteChoice = "grassAlt";
       else
-        bgSpriteChoice = "grass"
+        bgSpriteChoice = "grass";
 
-      var bgSprite = jsGame.add.sprite(bgCoords[i][0], bgCoords[i][1], bgSpriteChoice)
-      bgSprite.width = 400
-      bgSprite.height = 320
+      var bgSprite = jsGame.add.sprite(bgCoords[i][0], bgCoords[i][1], bgSpriteChoice);
+      bgSprite.width = 400;
+      bgSprite.height = 320;
     }
 
-    player = fightStateInfo.player
-    enemy = fightStateInfo.enemy
+    player = fightStateInfo.player;
+    enemy = fightStateInfo.enemy;
 
     player.sprite = jsGame.add.sprite(32 * 4, 640 - (32 * 4), "player")
     player.sprite.scale.setTo(6, 6)
@@ -87,20 +89,31 @@ FightState.prototype = {
     enemyIdle = jsGame.add.tween(enemy.sprite).to({ x: enemy.sprite.x + 16, y: enemy.sprite.y + 16 },
       4250 - (enemy.agility * 750), Phaser.Easing.Quadratic.InOut, true, 0, Number.MAX_VALUE, true)
 
+    player.hpBarMax = jsGame.add.sprite(player.sprite.x * 1.9, player.sprite.y - (player.sprite.height/2.2), "hpBarMax")
+    player.hpBarMax.scale.x = 200
 
-    player.hpText = jsGame.add.text(32 * 9, 464, "HP: " + player.hp, monoStyle);
+    player.hpBar = jsGame.add.sprite(player.sprite.x * 1.9, player.sprite.y - (player.sprite.height/2.2), "hpBar")
+    player.hpBar.scale.x = (player.curHP / player.maxHP) * 200
+    player.hpText = jsGame.add.text(32 * 9, 464, "HP: " + player.curHP, monoStyle);
     player.hpText.anchor.setTo(0.5, 0.5);
 
     var text = "\nSTR: " + player.strength + "\nAGI: " + player.agility + "\nMAG: " + player.magic
-    
+
     playerStats = jsGame.add.text(32 * 9, player.hpText.y + 48, text, monoStyle);
     playerStats.anchor.setTo(0.5, 0.5);
 
-    enemy.hpText = enemyStats = jsGame.add.text(800 - (32*10), 86, "HP: " + enemy.hp, monoStyle);
+    enemy.hpBarMax = jsGame.add.sprite(enemy.sprite.x * 0.85, enemy.sprite.y + (enemy.sprite.height/2.5), "hpBarMax")
+    enemy.hpBarMax.scale.x = 200
+    enemy.hpBarMax.anchor.setTo(1, 0)
+
+    enemy.hpBar = jsGame.add.sprite(enemy.sprite.x * 0.85, enemy.sprite.y + (enemy.sprite.height/2.5), "hpBar")
+    enemy.hpBar.scale.x = (enemy.curHP / enemy.maxHP) * 200
+    enemy.hpBar.anchor.setTo(1, 0)
+    enemy.hpText = enemyStats = jsGame.add.text(800 - (32*10), 86, "HP: " + enemy.curHP, monoStyle);
     enemy.hpText.anchor.setTo(0.5, 0.5);
 
     text = "\nSTR: " + enemy.strength + "\nAGI: " + enemy.agility + "\nMAG: " + enemy.magic
-    
+
     enemyStats = jsGame.add.text(800 - (32*10), enemy.hpText.y + 48, text, monoStyle);
     enemyStats.anchor.setTo(0.5, 0.5);
 
@@ -116,8 +129,8 @@ FightState.prototype = {
 
     jsGame.input.keyboard.addCallbacks(null, fightKeyPress, null);
 
-     canAttack = true
-     combatOver = false
+    canAttack = true
+    combatOver = false
   },
 
   update: function() {
@@ -172,8 +185,10 @@ function attackEnemy() {
   playerIdle.pause()
   enemyIdle.pause()
 
-  enemy.hp -= 1
+  enemy.curHP -= 1
   updateHP(enemy)
+  player.curHP -= 3
+  updateHP(player)
 
   var attack = jsGame.add.tween(player.sprite).to({ x: enemy.sprite.x - 64, y: enemy.sprite.y + 64 },
     500, Phaser.Easing.Back.Out, true, 0, 0, true)
@@ -182,7 +197,7 @@ function attackEnemy() {
 
   attack.onComplete.add(function() { playerIdle.resume() }, null)
 
-  if (enemy.hp > 0) {
+  if (enemy.curHP > 0) {
     var reaction = jsGame.add.tween(enemy.sprite).to({ x: enemy.sprite.x + 32, y: enemy.sprite.y - 32 },
       200, Phaser.Easing.Circular.InOut, true, 180, 0, true)
 
@@ -190,7 +205,7 @@ function attackEnemy() {
     var hurtSFX = jsGame.add.audio("hurt" + randomBetween(1, 6))
     reaction.onStart.add(function() { hurtSFX.play(); attackSFX.play() }, null)
     reaction.onComplete.add(function() { enemyIdle.resume() }, null)
-  }  
+  }
   else {
     killEnemy()
   }
@@ -199,6 +214,8 @@ function attackEnemy() {
 function killEnemy() {
   canAttack = false
   combatOver = true
+
+  fightMusic.stop()
 
   enemyDeathHitSFX = jsGame.add.audio("enemyDeathHit")
   enemyDeathHitSFX.play()
@@ -230,10 +247,12 @@ function killEnemy() {
 }
 
 function updateHP(actor) {
-  if (actor.hp == 0)
+  if (actor.curHP <= 0)
     actor.hpText.setText("DEAD :(")
   else
-    actor.hpText.setText("HP: " + actor.hp)
+    actor.hpText.setText("HP: " + actor.curHP)
+
+  actor.hpBar.scale.x = (actor.curHP / actor.maxHP) * 200
 }
 
 function disableMenus() {

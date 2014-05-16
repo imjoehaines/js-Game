@@ -25,6 +25,7 @@ var allEnemies = []
 var enemyCountText;
 
 var bgAudioTimeout;
+var bgMusic = null;
 
 var sprites = {
   ".": "grass",
@@ -55,41 +56,27 @@ var allRooms = [];
 var PlayState = function(game) {  };
 PlayState.prototype = {
   preload: function() {
-    jsGame.load.image("grass", "img/grass.png")
-    jsGame.load.image("grassAlt", "img/grassAlt.png")
-    jsGame.load.image("wall", "img/wall.png")
-    jsGame.load.image("wall-hb", "img/wall-hb.png")
-    jsGame.load.image("wall-ht", "img/wall-ht.png")
-    jsGame.load.image("wall-h2", "img/wall-h2.png")
-    jsGame.load.image("wall-vl", "img/wall-vl.png")
-    jsGame.load.image("wall-vr", "img/wall-vr.png")
-    jsGame.load.image("wall-v2", "img/wall-v2.png")
 
-    jsGame.load.image("player", "img/paladin.gif")
-    jsGame.load.image("orc", "img/orc.gif")
+    // jsGame.load.audio("bird", "sfx/bg/bird.wav")
+    // jsGame.load.audio("fabric", "sfx/bg/fabric.wav")
+    // jsGame.load.audio("crack1", "sfx/bg/crack1.wav")
+    // jsGame.load.audio("crack2", "sfx/bg/crack2.wav")
+    // jsGame.load.audio("crack3", "sfx/bg/crack3.wav")
+    // jsGame.load.audio("crack4", "sfx/bg/crack4.wav")
+    // jsGame.load.audio("crack5", "sfx/bg/crack5.wav")
+    // jsGame.load.audio("crack6", "sfx/bg/crack6.wav")
+    // jsGame.load.audio("creak1", "sfx/bg/creak1.wav")
+    // jsGame.load.audio("creak2", "sfx/bg/creak2.wav")
+    // jsGame.load.audio("creak3", "sfx/bg/creak3.wav")
+    // jsGame.load.audio("creak4", "sfx/bg/creak4.wav")
+    // jsGame.load.audio("creak5", "sfx/bg/creak5.wav")
+    // jsGame.load.audio("creak6", "sfx/bg/creak6.wav")
+    // jsGame.load.audio("creak7", "sfx/bg/creak7.wav")
+    // jsGame.load.audio("creak8", "sfx/bg/creak8.wav")
+    // jsGame.load.audio("creak9", "sfx/bg/creak9.wav")
+    // jsGame.load.audio("creak10", "sfx/bg/creak10.wav")
 
-    jsGame.load.audio("bgLoop", "sfx/bg/loop.wav")
-    jsGame.load.audio("bird", "sfx/bg/bird.wav")
-    jsGame.load.audio("fabric", "sfx/bg/fabric.wav")
-    jsGame.load.audio("crack1", "sfx/bg/crack1.wav")
-    jsGame.load.audio("crack2", "sfx/bg/crack2.wav")
-    jsGame.load.audio("crack3", "sfx/bg/crack3.wav")
-    jsGame.load.audio("crack4", "sfx/bg/crack4.wav")
-    jsGame.load.audio("crack5", "sfx/bg/crack5.wav")
-    jsGame.load.audio("crack6", "sfx/bg/crack6.wav")
-    jsGame.load.audio("creak1", "sfx/bg/creak1.wav")
-    jsGame.load.audio("creak2", "sfx/bg/creak2.wav")
-    jsGame.load.audio("creak3", "sfx/bg/creak3.wav")
-    jsGame.load.audio("creak4", "sfx/bg/creak4.wav")
-    jsGame.load.audio("creak5", "sfx/bg/creak5.wav")
-    jsGame.load.audio("creak6", "sfx/bg/creak6.wav")
-    jsGame.load.audio("creak7", "sfx/bg/creak7.wav")
-    jsGame.load.audio("creak8", "sfx/bg/creak8.wav")
-    jsGame.load.audio("creak9", "sfx/bg/creak9.wav")
-    jsGame.load.audio("creak10", "sfx/bg/creak10.wav")
-
-    jsGame.load.audio("fightTransition", "sfx/fightTransition.wav")
-    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav")
+    // jsGame.load.audio("fightTransition", "sfx/fightTransition.wav")
   },
   
   create:  function() {
@@ -329,7 +316,7 @@ function drawMap() {
 }
 
 function initPlayer() {
-  player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 5, 5, 5)
+  player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 50, 5, 5, 5)
 }
 
 function drawPlayer() {
@@ -350,7 +337,7 @@ function placeEnemies() {
     for (var x = 0; x < NoColumns; x++)
       if (map[y][x] == grassChar && !(x == player.x && y == player.y)) 
         if (randomBetween(1, 100) > 98) {
-          var newEnemy = new Actor(x, y, "enemy", 3, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
+          var newEnemy = new Actor(x, y, "enemy", 3, 3, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
           allEnemies.push(newEnemy)
         }
 }
@@ -416,8 +403,11 @@ function attackOther(actor, other) {
   jsGame.camera.follow(null) // stop camera following the player
   jsGame.input.keyboard.addCallbacks(null, null, null); //remove player input
 
-  fightTransitionSFX = jsGame.add.audio("fightTransition")
-  fightTransitionSFX.play() //start the transition music
+  bgMusic.pause()
+  //fightTransitionSFX = jsGame.add.audio("fightTransition")
+  //fightTransitionSFX.play() //start the transition music
+  fightMusic = jsGame.add.audio("fightMusic", 0.5, true)
+  fightMusic.play()
 
   var fill = jsGame.add.bitmapData(800, 640);
   
@@ -430,6 +420,7 @@ function attackOther(actor, other) {
   fightTransition.width = 800;
   fightTransition.height = 640;
   fightTransition.alpha = 0
+
   jsGame.add.tween(fightTransition).to({ alpha: 0.75 }, 1500, Phaser.Easing.Cubic.In, true, 0).start()
 
   var background = jsGame.add.group()
@@ -468,9 +459,11 @@ function attackOther(actor, other) {
     "allEnemies": allEnemies
   }
 
+  jsGame.stage.backgroundColor = "#8ba049";
+
   setTimeout(function() {
-    jsGame.state.start("fight");
-  }, 3500)
+    jsGame.state.start("fight")
+  }, 1750)
 }
 
 function updateActor(actor) {
@@ -505,7 +498,7 @@ function gameOver() {
   jsGame.input.keyboard.addCallbacks(null, null, null);
 
   setTimeout(function() {
-    bgAudioTimeout.clearTimeout()
+    //bgAudioTimeout.clearTimeout()
     t.destroy();
     jsGame.camera.reset();
     jsGame.state.start("menu");
@@ -516,12 +509,17 @@ function gameOver() {
 
 function backgroundNoise() {
   //                                    vol  loop
-  var loop = jsGame.add.audio("bgLoop", 0.1, true)
-  loop.play()
+  if (bgMusic == null)
+    bgMusic = jsGame.add.audio("bgLoop", 0.5, true)
+  
+  if (bgMusic.paused)
+    bgMusic.resume()
+  else
+    bgMusic.play()
 
-  var bgAudio = [
+/*  var bgAudio = [
     "bird",
-/*    "fabric",
+    "fabric",
     "crack1",
     "crack2",
     "crack3",
@@ -537,7 +535,7 @@ function backgroundNoise() {
     "creak7",
     "creak8",
     "creak9",
-    "creak10"*/
+    "creak10"
   ]
 
   bgAudioTimeout = setInterval(function() {
@@ -545,6 +543,6 @@ function backgroundNoise() {
     console.log(choice + " | " + bgAudio[choice])
     var bgAudioSFX = jsGame.add.audio(bgAudio[choice], 0.2)
     bgAudioSFX.play()
-  }, 10000)
+  }, 10000)*/
 
 }
