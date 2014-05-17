@@ -60,7 +60,7 @@ MenuState.prototype = {
   },
   
   create:  function() {
-    jsGame.world.setBounds(0, 0, 800, 640);
+    jsGame.world.setBounds(0, 0, 800, 560);
     drawMenuItems(menuItems)
   },
 

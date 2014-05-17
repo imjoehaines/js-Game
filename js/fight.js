@@ -9,7 +9,6 @@ var runText;
 var indicatorText;
 var combatText;
 
-var canAttack;
 var combatOver;
 
 var fightMusic;
@@ -29,32 +28,7 @@ var serifStyle = {
 var FightState = function() {  };
 FightState.prototype = {
   preload: function() {
-    jsGame.load.image("player", "img/paladin.gif");
-    jsGame.load.image("orc", "img/orc.gif");
-    jsGame.load.image("grass", "img/grass.png");
-    jsGame.load.image("grass", "img/grassAlt.png");
 
-    jsGame.load.audio("hurt1", "sfx/hurt/1.wav");
-    jsGame.load.audio("hurt2", "sfx/hurt/2.wav");
-    jsGame.load.audio("hurt3", "sfx/hurt/3.wav");
-    jsGame.load.audio("hurt4", "sfx/hurt/4.wav");
-    jsGame.load.audio("hurt5", "sfx/hurt/5.wav");
-    jsGame.load.audio("hurt6", "sfx/hurt/6.wav");
-    jsGame.load.audio("attack1", "sfx/attack/1.wav");
-    jsGame.load.audio("attack2", "sfx/attack/2.wav");
-    jsGame.load.audio("attack3", "sfx/attack/3.wav");
-    jsGame.load.audio("attack4", "sfx/attack/4.wav");
-    jsGame.load.audio("attack5", "sfx/attack/5.wav");
-    jsGame.load.audio("attack6", "sfx/attack/6.wav");
-    jsGame.load.audio("attack7", "sfx/attack/7.wav");
-    jsGame.load.audio("attack8", "sfx/attack/8.wav");
-    jsGame.load.audio("attack9", "sfx/attack/9.wav");
-    jsGame.load.audio("attack10", "sfx/attack/10.wav");
-
-    jsGame.load.audio("enemyDeath", "sfx/enemyDeath.wav");
-    jsGame.load.audio("enemyDeathHit", "sfx/enemyDeathHit.wav");
-
-    jsGame.load.audio("fightWin", "sfx/fightWin.wav");
   },
 
   create: function() {
@@ -77,7 +51,7 @@ FightState.prototype = {
     player = fightStateInfo.player;
     enemy = fightStateInfo.enemy;
 
-    player.sprite = jsGame.add.sprite(32 * 4, 640 - (32 * 4), "player")
+    player.sprite = jsGame.add.sprite(32 * 4, 640 - (32 * 5), "player")
     player.sprite.scale.setTo(6, 6)
     player.sprite.anchor.setTo(0.5, 0.5)
     playerIdle = jsGame.add.tween(player.sprite).to({ x: player.sprite.x + 16, y: player.sprite.y + 16 },
@@ -129,13 +103,13 @@ FightState.prototype = {
 
     jsGame.input.keyboard.addCallbacks(null, fightKeyPress, null);
 
-    canAttack = true
+    jsGame.input.disabled = false;
     combatOver = false
   },
 
   update: function() {
     if (combatOver) {
-      canAttack = false
+      jsGame.input.disabled = true;
       disableMenus()
     }
   },
@@ -150,7 +124,7 @@ function fightKeyPress(event) {
   else if(event.keyCode == Phaser.Keyboard.LEFT){
     moveIndicator(false)
   }
-  else if (event.keyCode == Phaser.Keyboard.ENTER && canAttack) {
+  else if (event.keyCode == Phaser.Keyboard.ENTER) {
     confirmCommand()
   }
 }
@@ -170,13 +144,13 @@ function confirmCommand() {
 
   }
   else {
-    canAttack = false
+    jsGame.input.disabled = true;
     attackEnemy()
     disableMenus()
   }
 
   setTimeout(function() {
-    canAttack = true
+    jsGame.input.disabled = false;
     enableMenus()
   }, 1000)
 }
@@ -212,7 +186,7 @@ function attackEnemy() {
 }
 
 function killEnemy() {
-  canAttack = false
+  jsGame.input.disabled = true;
   combatOver = true
 
   fightMusic.stop()
@@ -252,7 +226,11 @@ function updateHP(actor) {
   else
     actor.hpText.setText("HP: " + actor.curHP)
 
-  actor.hpBar.scale.x = (actor.curHP / actor.maxHP) * 200
+  jsGame.add.tween(actor.hpBar.scale).to({ x: (actor.curHP / actor.maxHP) * 200 },
+      750, Phaser.Easing.Quadratic.InOut, true, 0, 0, false)
+  //actor.hpBar.scale.x = (actor.curHP / actor.maxHP) * 200
+
+  hpDisplay.innerHTML = player.curHP
 }
 
 function disableMenus() {

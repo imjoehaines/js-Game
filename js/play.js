@@ -57,32 +57,13 @@ var PlayState = function(game) {  };
 PlayState.prototype = {
   preload: function() {
 
-    // jsGame.load.audio("bird", "sfx/bg/bird.wav")
-    // jsGame.load.audio("fabric", "sfx/bg/fabric.wav")
-    // jsGame.load.audio("crack1", "sfx/bg/crack1.wav")
-    // jsGame.load.audio("crack2", "sfx/bg/crack2.wav")
-    // jsGame.load.audio("crack3", "sfx/bg/crack3.wav")
-    // jsGame.load.audio("crack4", "sfx/bg/crack4.wav")
-    // jsGame.load.audio("crack5", "sfx/bg/crack5.wav")
-    // jsGame.load.audio("crack6", "sfx/bg/crack6.wav")
-    // jsGame.load.audio("creak1", "sfx/bg/creak1.wav")
-    // jsGame.load.audio("creak2", "sfx/bg/creak2.wav")
-    // jsGame.load.audio("creak3", "sfx/bg/creak3.wav")
-    // jsGame.load.audio("creak4", "sfx/bg/creak4.wav")
-    // jsGame.load.audio("creak5", "sfx/bg/creak5.wav")
-    // jsGame.load.audio("creak6", "sfx/bg/creak6.wav")
-    // jsGame.load.audio("creak7", "sfx/bg/creak7.wav")
-    // jsGame.load.audio("creak8", "sfx/bg/creak8.wav")
-    // jsGame.load.audio("creak9", "sfx/bg/creak9.wav")
-    // jsGame.load.audio("creak10", "sfx/bg/creak10.wav")
-
-    // jsGame.load.audio("fightTransition", "sfx/fightTransition.wav")
   },
   
   create:  function() {
     jsGame.world.setBounds(0, 0, 1600, 1280);
 
     jsGame.input.keyboard.addCallbacks(null, onKeyPress, null);
+    jsGame.input.disabled = false;
 
     if (!playStateInfo.hasOwnProperty("map")) {
       makeMap()
@@ -95,9 +76,10 @@ PlayState.prototype = {
     drawEnemies()
     drawPlayer()
 
-    backgroundNoise()
+    backgroundNoise();
 
     jsGame.camera.follow(player.sprite, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
+
     enemyCountText = jsGame.add.text(66, 24, "Orcs left", {
         font: "24px Arial",
         fill: "#000000"
@@ -149,8 +131,13 @@ function onKeyPress(event) {
     hadTurn = true
   }
 
-  if (hadTurn)
+  if (hadTurn) {
+    if (player.curHP < player.maxHP) {
+      player.curHP += 1 // heal if not at max health
+      hpDisplay.innerHTML = player.curHP
+    }
     enemyTurn()
+  }
 }
 
 function makeMap() {
@@ -317,6 +304,10 @@ function drawMap() {
 
 function initPlayer() {
   player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 50, 5, 5, 5)
+  hpDisplay.innerHTML = player.curHP
+  strDisplay.innerHTML = player.strength
+  agiDisplay.innerHTML = player.agility
+  magDisplay.innerHTML = player.magic
 }
 
 function drawPlayer() {
@@ -337,7 +328,8 @@ function placeEnemies() {
     for (var x = 0; x < NoColumns; x++)
       if (map[y][x] == grassChar && !(x == player.x && y == player.y)) 
         if (randomBetween(1, 100) > 98) {
-          var newEnemy = new Actor(x, y, "enemy", 3, 3, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
+          var hp = randomBetween(2, 10)
+          var newEnemy = new Actor(x, y, "enemy", hp, hp, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
           allEnemies.push(newEnemy)
         }
 }
@@ -449,7 +441,7 @@ function attackOther(actor, other) {
   fightStateInfo.enemy.sprite.bringToTop()
 
   jsGame.add.tween(player.sprite.scale).to({ x: 6, y: 6 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
-  jsGame.add.tween(player.sprite).to({ x: jsGame.camera.x + 32, y: jsGame.camera.y + 400 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
+  jsGame.add.tween(player.sprite).to({ x: jsGame.camera.x + 32, y: jsGame.camera.y + 380 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
   jsGame.add.tween(fightStateInfo.enemy.sprite.scale).to({ x: 6, y: 6 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
   jsGame.add.tween(fightStateInfo.enemy.sprite).to({ x: jsGame.camera.x + 544, y: jsGame.camera.y + 32 }, 1750, Phaser.Easing.Quadratic.InOut, true, 0).start()
 
