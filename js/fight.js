@@ -63,18 +63,15 @@ FightState.prototype = {
     enemyIdle = jsGame.add.tween(enemy.sprite).to({ x: enemy.sprite.x + 16, y: enemy.sprite.y + 16 },
       4250 - (enemy.agility * 750), Phaser.Easing.Quadratic.InOut, true, 0, Number.MAX_VALUE, true)
 
-    player.hpBarMax = jsGame.add.sprite(player.sprite.x * 1.9, player.sprite.y - (player.sprite.height/2.2), "hpBarMax")
+    player.hpBarMax = jsGame.add.sprite(player.sprite.x * 1.9, player.sprite.y - 24, "hpBarMax")
     player.hpBarMax.scale.x = 200
-
-    player.hpBar = jsGame.add.sprite(player.sprite.x * 1.9, player.sprite.y - (player.sprite.height/2.2), "hpBar")
+    player.hpBar = jsGame.add.sprite(player.sprite.x * 1.9, player.hpBarMax.y, "hpBar")
     player.hpBar.scale.x = (player.curHP / player.maxHP) * 200
-    player.hpText = jsGame.add.text(32 * 9, 464, "HP: " + player.curHP, monoStyle);
-    player.hpText.anchor.setTo(0.5, 0.5);
 
-    var text = "\nSTR: " + player.strength + "\nAGI: " + player.agility + "\nMAG: " + player.magic
-
-    playerStats = jsGame.add.text(32 * 9, player.hpText.y + 48, text, monoStyle);
-    playerStats.anchor.setTo(0.5, 0.5);
+    player.mpBarMax = jsGame.add.sprite(player.sprite.x * 1.9, player.sprite.y, "mpBarMax")
+    player.mpBarMax.scale.x = 200
+    player.mpBar = jsGame.add.sprite(player.mpBarMax.x, player.mpBarMax.y, "mpBar")
+    player.mpBar.scale.x = (player.curHP / player.maxHP) * 200
 
     enemy.hpBarMax = jsGame.add.sprite(enemy.sprite.x * 0.85, enemy.sprite.y + (enemy.sprite.height/2.5), "hpBarMax")
     enemy.hpBarMax.scale.x = 200
@@ -93,6 +90,8 @@ FightState.prototype = {
 
     attackText = jsGame.add.text(32 * 14, 500, "Attack", serifStyle);
     attackText.anchor.setTo(0, 0.5);
+    magicText = jsGame.add.text(32 * 18, 500, "Magic", serifStyle);
+    magicText.anchor.setTo(0, 0.5);
     runText = jsGame.add.text(32 * 18, 500, "Run", serifStyle);
     runText.anchor.setTo(0, 0.5);
 
@@ -221,16 +220,17 @@ function killEnemy() {
 }
 
 function updateHP(actor) {
-  if (actor.curHP <= 0)
-    actor.hpText.setText("DEAD :(")
-  else
-    actor.hpText.setText("HP: " + actor.curHP)
+  if (actor.hpText) {
+    if (actor.curHP <= 0)
+      actor.hpText.setText("DEAD :(")
+    else
+      actor.hpText.setText("HP: " + actor.curHP)
+  }
 
   jsGame.add.tween(actor.hpBar.scale).to({ x: (actor.curHP / actor.maxHP) * 200 },
       750, Phaser.Easing.Quadratic.InOut, true, 0, 0, false)
-  //actor.hpBar.scale.x = (actor.curHP / actor.maxHP) * 200
 
-  hpDisplay.innerHTML = player.curHP
+  updateStats()
 }
 
 function disableMenus() {

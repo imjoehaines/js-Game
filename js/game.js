@@ -1,5 +1,6 @@
 window.onload = function () {
   hpDisplay = document.getElementById("hpDisp")
+  mpDisplay = document.getElementById("mpDisp")
   strDisplay = document.getElementById("strDisp")
   agiDisplay = document.getElementById("agiDisp")
   magDisplay = document.getElementById("magDisp")

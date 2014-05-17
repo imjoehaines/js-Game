@@ -134,7 +134,7 @@ function onKeyPress(event) {
   if (hadTurn) {
     if (player.curHP < player.maxHP) {
       player.curHP += 1 // heal if not at max health
-      hpDisplay.innerHTML = player.curHP
+      updateStats()
     }
     enemyTurn()
   }
@@ -303,12 +303,18 @@ function drawMap() {
 }
 
 function initPlayer() {
-  player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 50, 5, 5, 5)
+  player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 50, 10, 10, 5, 5, 5)
+  updateStats()
+}
+
+function updateStats() {
   hpDisplay.innerHTML = player.curHP
+  mpDisplay.innerHTML = player.curMP
   strDisplay.innerHTML = player.strength
   agiDisplay.innerHTML = player.agility
   magDisplay.innerHTML = player.magic
 }
+
 
 function drawPlayer() {
   player.sprite = jsGame.add.sprite(player.x * TileSize, player.y * TileSize, "player");
@@ -329,7 +335,8 @@ function placeEnemies() {
       if (map[y][x] == grassChar && !(x == player.x && y == player.y)) 
         if (randomBetween(1, 100) > 98) {
           var hp = randomBetween(2, 10)
-          var newEnemy = new Actor(x, y, "enemy", hp, hp, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
+          var mp = randomBetween(1, 5)
+          var newEnemy = new Actor(x, y, "enemy", hp, hp, mp, mp, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5))
           allEnemies.push(newEnemy)
         }
 }
@@ -508,33 +515,4 @@ function backgroundNoise() {
     bgMusic.resume()
   else
     bgMusic.play()
-
-/*  var bgAudio = [
-    "bird",
-    "fabric",
-    "crack1",
-    "crack2",
-    "crack3",
-    "crack4",
-    "crack5",
-    "crack6",
-    "creak1",
-    "creak2",
-    "creak3",
-    "creak4",
-    "creak5",
-    "creak6",
-    "creak7",
-    "creak8",
-    "creak9",
-    "creak10"
-  ]
-
-  bgAudioTimeout = setInterval(function() {
-    var choice = randomBetween(0, bgAudio.length - 1)
-    console.log(choice + " | " + bgAudio[choice])
-    var bgAudioSFX = jsGame.add.audio(bgAudio[choice], 0.2)
-    bgAudioSFX.play()
-  }, 10000)*/
-
 }

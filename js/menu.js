@@ -12,6 +12,8 @@ MenuState.prototype = {
     jsGame.load.image("wall", "img/wall.png")
     jsGame.load.image("hpBar", "img/hpBar.png")
     jsGame.load.image("hpBarMax", "img/hpBarMax.png")
+    jsGame.load.image("mpBar", "img/mpBar.png")
+    jsGame.load.image("mpBarMax", "img/mpBarMax.png")
 /*    jsGame.load.image("wall-hb", "img/wall-hb.png")
     jsGame.load.image("wall-ht", "img/wall-ht.png")
     jsGame.load.image("wall-h2", "img/wall-h2.png")

@@ -22,12 +22,14 @@ function Room(x, y, width, height) {
   }
 }
 
-function Actor(x, y, faction, curHP, maxHP, strength, agility, magic) {
+function Actor(x, y, faction, curHP, maxHP, curMP, maxMP, strength, agility, magic) {
   this.x = x
   this.y = y
   this.faction = faction
   this.curHP = curHP
   this.maxHP = maxHP
+  this.curMP = curMP
+  this.maxMP = maxMP
   this.strength = strength
   this.agility = agility
   this.magic = magic
