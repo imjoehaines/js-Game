@@ -174,9 +174,6 @@ function attackEnemy() {
     var reaction = jsGame.add.tween(enemy.sprite).to({ x: enemy.sprite.x + 32, y: enemy.sprite.y - 32 },
       200, Phaser.Easing.Circular.InOut, true, 180, 0, true)
 
-    var attackSFX = jsGame.add.audio("attack" + randomBetween(1, 10))
-    var hurtSFX = jsGame.add.audio("hurt" + randomBetween(1, 6))
-    reaction.onStart.add(function() { hurtSFX.play(); attackSFX.play() }, null)
     reaction.onComplete.add(function() { enemyIdle.resume() }, null)
   }
   else {
@@ -187,17 +184,6 @@ function attackEnemy() {
 function killEnemy() {
   jsGame.input.disabled = true;
   combatOver = true
-
-  fightMusic.stop()
-
-  enemyDeathHitSFX = jsGame.add.audio("enemyDeathHit")
-  enemyDeathHitSFX.play()
-
-  enemyDeathSFX = jsGame.add.audio("enemyDeath")
-  enemyDeathSFX.play()
-
-  fightWinSFX = jsGame.add.audio("fightWin")
-  fightWinSFX.play()
 
   combatText = jsGame.add.text(jsGame.world.centerX, jsGame.world.centerY, "You Won!", style);
   combatText.anchor.setTo(0.5, 0.5)

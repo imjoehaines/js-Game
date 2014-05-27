@@ -1,2 +1,0 @@
-enemyDeath : GROAN Male Hurt Long Pain (mono)
-fightTransition : MUSIC EFFECT Orchestral Battle Neutral (stereo)

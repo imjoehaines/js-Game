@@ -24,9 +24,6 @@ var playerStartLoc;
 var allEnemies = []
 var enemyCountText;
 
-var bgAudioTimeout;
-var bgMusic = null;
-
 var sprites = {
   ".": "grass",
   ",": "grassAlt",
@@ -75,8 +72,6 @@ PlayState.prototype = {
     drawMap()
     drawEnemies()
     drawPlayer()
-
-    backgroundNoise();
 
     jsGame.camera.follow(player.sprite, Phaser.Camera.FOLLOW_TOPDOWN_TIGHT);
 
@@ -402,12 +397,6 @@ function attackOther(actor, other) {
   jsGame.camera.follow(null) // stop camera following the player
   jsGame.input.keyboard.addCallbacks(null, null, null); //remove player input
 
-  bgMusic.pause()
-  //fightTransitionSFX = jsGame.add.audio("fightTransition")
-  //fightTransitionSFX.play() //start the transition music
-  fightMusic = jsGame.add.audio("fightMusic", 0.5, true)
-  fightMusic.play()
-
   var fill = jsGame.add.bitmapData(800, 640);
   
   fill.ctx.beginPath();
@@ -497,22 +486,9 @@ function gameOver() {
   jsGame.input.keyboard.addCallbacks(null, null, null);
 
   setTimeout(function() {
-    //bgAudioTimeout.clearTimeout()
     t.destroy();
     jsGame.camera.reset();
     jsGame.state.start("menu");
   }, 2500)
 
-}
-
-
-function backgroundNoise() {
-  //                                    vol  loop
-  if (bgMusic == null)
-    bgMusic = jsGame.add.audio("bgLoop", 0.5, true)
-  
-  if (bgMusic.paused)
-    bgMusic.resume()
-  else
-    bgMusic.play()
 }

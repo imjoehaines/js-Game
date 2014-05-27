@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Item Test</title>
+<link href='http://fonts.googleapis.com/css?family=Karla:400,400italic' rel='stylesheet' type='text/css'>
+</head>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+  }
+  
+  body {
+    font-family: "Karla", "Open Sans", "Roboto", "Lato", "Droid Sans", "PT Sans", "Calibri", sans-serif;
+    background: url("http://joehaines.co.uk/game/img/grass.png");
+  }
+  
+  p {
+    display: inline-block;
+    margin: 2px 0;
+    padding: 8px;
+    font-size: 1.25em;
+    width: 50%;
+    text-align: center;
+    color: white;
+  }
+  
+  ol {
+    display: flex;
+    list-style: none;
+    justify-content: space-around;
+    margin: 0;
+    padding: 1em;
+    border-bottom: 1px solid #333;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+  
+  li {
+    margin: auto;
+    font-size: 1.25em;
+    flex-grow: 1;
+  }
+
+  .simple {
+    background: #aaa;
+    color: #333;
+  }
+  .common {
+    background: #10B47D;
+    color: #fff;
+  }
+  .fine {
+    background: #124385;
+    color: #fff;
+  }
+  .rare {
+    background: #BF538D;
+    color: #fff;
+  }
+  .mythical {
+    background: #FFC83F;
+    color: #333;
+  }
+
+  .tooltip {
+    max-width: 400px;
+    margin: 0.5em;
+    padding: 0.5em;
+    background: rgba(255, 255, 255, 0.66);
+    color: #111;
+    font-size: 1.25em;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+    flex-grow: 1;
+  }
+
+  .tooltip h3 {
+    font-weight: normal;
+  }
+  
+  .tooltip ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.75em;
+  }
+  .tooltip ul em {
+    font-style: normal;
+    color: #000066;
+  }
+  
+  .tooltip.simple, .tooltip.common, .tooltip.fine, .tooltip.rare, .tooltip.mythical {
+    border: 5px solid;
+    border-radius: 5px;
+  }
+  
+  .tooltip.simple {
+    border-color: #aaa;
+  }
+  .tooltip.common {
+    border-color: #10B47D;
+  }
+  .tooltip.fine {
+    border-color: #124385;
+  }
+  .tooltip.rare {
+    border-color: #BF538D;
+    box-shadow: 0 0 0.5em #BF538D;
+  }
+  .tooltip.mythical {
+    border-color: #FFC83F;
+    box-shadow: 0 0 2em #FFC83F, inset 0 0 1em #FFC83F;
+  }
+  
+  .wrap {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .wrap p {
+    flex-basis: 33%
+  }
+  
+  .tooltip ul {
+    margin-top: 0.5em;
+  }
+  
+  .wide {
+    flex-basis: 100%;
+    padding-bottom: 0.5em;
+    max-width: inherit;
+  }
+  
+  .inventory {
+    margin: 2.5em 0;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.66);
+    border: 5px solid rgba(0,0,0, 0.66);
+  }
+  
+  .inventory .player {
+    height: 400px;
+    width: 400px;
+    margin: 30px;
+    background-image: url("http://joehaines.co.uk/game/img/paladin.gif");
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  
+  .inventory ul.inv-items {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    list-style-type: none;
+    border-left: 5px solid rgba(0,0,0, 0.66);
+  }
+  
+  .inventory  ul.inv-items:last-child {
+    border-width: 1px;
+  }
+  
+  .inventory .inv-items li {
+    width: 120px;
+    height: 94px;
+    line-height: 94px;
+    border-bottom: 1px solid rgba(0,0,0, 0.66);
+  }
+  
+  .inventory li:last-child {
+    border: none;
+  }
+  
+  .inv-simple {
+    background: rgba(170, 170, 170, 0.5);
+  }
+  .inv-common {
+    background: rgba(16, 180, 125, 0.5);
+  }
+  .inv-fine {
+    background: rgba(18, 67, 133, 0.5);
+  }
+  .inv-rare {
+    background: rgba(191, 83, 141, 0.5);
+  }
+  .inv-mythical {
+    background: rgba(255, 200, 63, 0.5);
+  }
+  
+  .inv-items-container {
+    display: flex;
+  }
+  
+  .inventory .tooltip {
+    position: absolute;
+    left: 30px;
+    top: 15px;
+    margin: auto;
+  }
+  
+</style>
+<body>
+  <div class="wrap">
+    <div class="tooltip wide">
+      <ul>
+        <li>Armour damage reduction: <em>ARMOUR</em> / 250 * 100</li>
+      </ul>
+      <ul style="display: flex; justify-content: space-between;">
+        <ul>
+          <li>Max <em>Armour</em> values per SLOT:</li>
+          <li>Head: 25</li>
+          <li>Hands: 25</li>
+          <li>Feet: 25</li>
+          <li>Legs: 55</li>
+          <li>Chest: 70</li>
+        </ul>
+        <ul>
+          <li>Armour values divided by <em>x</em> per quality:</li>
+          <li>Simple: 15</li>
+          <li>Common: 10</li>
+          <li>Fine: 5</li>
+          <li>Rare: 2</li>
+          <li>Mythical: 1</li>
+        </ul>
+        <ul>
+          <li>Max <em>Health + Mana</em> values per quality:</li>
+          <li>Simple: 2</li>
+          <li>Common: 5</li>
+          <li>Fine: 10</li>
+          <li>Rare: 20</li>
+          <li>Mythical: 40</li>
+        </ul>
+        <ul>
+          <li>Max <em>Strength + Agility + Magic</em> values per quality:</li>
+          <li>Simple: 1</li>
+          <li>Common: 2</li>
+          <li>Fine: 5</li>
+          <li>Rare: 10</li>
+          <li>Mythical: 20</li>
+        </ul>
+        <ul>
+          <li>Max <em>Crit + Speed</em> values per quality:</li>
+          <li>Simple: 0</li>
+          <li>Common: 0</li>
+          <li>Fine: 2</li>
+          <li>Rare: 10</li>
+          <li>Mythical: 20</li>
+        </ul>
+      </ul>
+    </div>
+
+  <div style="clear:both; height:1em;"></div>
+
+  <div class="inventory">
+    <div class="player"></div>
+    
+    <div class="tooltip rare" id="inv-item-tooltip">
+      <h3 id="inv-item-head">Rare Plate Faulds of Nowwe'retalking-ton</h3>
+      <em id="inv-item-slot">Legs</em>
+      <ul>
+        <li id="inv-item-armour"><em>+1</em> Armour</li>
+        <li id="inv-item-health"><em>+1</em> Health</li>
+        <li id="inv-item-mana"><em>+1</em> Mana</li>
+      </ul>
+      <ul>
+        <li id="inv-item-strength"><em>+1</em> Strength</li>
+        <li id="inv-item-agility"><em>+1</em> Agility</li>
+        <li id="inv-item-magic"><em>+1</em> Magic</li>
+      </ul>
+      <ul>
+        <li id="inv-item-crit"><em>+1% Critical Hit Chance</em></li>
+        <li id="inv-item-speed"><em>+1% Speed</em></li>
+      </ul>
+    </div>
+    
+    <div class="inv-items-container">
+      <ul class="inv-items">
+        <li class="inv-simple" onMouseOver="loadInvTooltip('Head')">Head</li>
+        <li class="inv-common" onMouseOver="loadInvTooltip('Chest')">Chest</li>
+        <li class="inv-fine" onMouseOver="loadInvTooltip('Hands')">Hands</li>
+        <li class="inv-rare" onMouseOver="loadInvTooltip('Legs')">Legs</li>
+        <li class="inv-mythical" onMouseOver="loadInvTooltip('Feet')">Feet</li>
+      </ul>
+  
+      <ul class="inv-items">
+        <li class="inv-mythical">Amulet</li>
+        <li class="inv-rare">Ring 1</li>
+        <li class="inv-fine">Ring 2</li>
+        <li class="inv-common">Main Hand</li>
+        <li class="inv-simple">Off Hand</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div style="clear:both; margin: 1em; height:1em;"></div>
+
+  <script>
+ 
+    function Item(slot, quality, material, item, suffix, armour, health, mana, strength, agility, magic, crit, speed) {
+      this.slot = slot
+      this.quality = quality
+      this.material = material
+      this.item = item
+      this.suffix = suffix
+      
+      this.name = this.quality + " " + this.material + " " + this.item + " " + this.suffix
+      
+      this.armour = armour
+      this.health = health
+      this.mana = mana
+      this.strength = strength
+      this.agility = agility
+      this.magic = magic
+      this.crit = crit
+      this.speed = speed
+    }
+  
+    var Items = {
+      "Head": {
+        "Armoured": ["Helm", "Helmet", "Great Helm", "Armet", "Barbute", "Bascinet", "Hounskull", "Sallet", "Tiara", "Crown"],
+        "Non-Armoured": ["Hat", "Hood", "Wizard's Hat", "Cap"]
+      },
+      "Chest": {
+        "Armoured": ["Breastplate", "Hauberk", "Cuirass"],
+        "Non-Armoured": ["Surcoat", "Robe", "Coat", "Shirt", "Overcoat", "Jacket", "Dress"]
+      },
+      "Hands": {
+        "Armoured": ["Gauntlets", "Demi-Guants", "Bracers"],
+        "Non-Armoured": ["Gloves", "Fingerless Gloves", "Mittens"]
+      },
+      "Legs": {
+        "Armoured": ["Greaves", "Poleyns", "Faulds", "Tassets"],
+        "Non-Armoured": ["Leggings", "Trousers", "Shorts", "Loincloth"]
+      },
+      "Feet": {
+        "Armoured": ["Boots", "Sabatons"],
+        "Non-Armoured": ["Boots", "Shoes"]
+      }
+    }
+    console.log(Items)
+  
+    var qualityPrefixes = [
+      "Simple",
+      "Common",
+      "Fine",
+      "Rare",
+      "Mythical"
+    ]
+    
+    var suffixes = {
+      "Simple": ["of Terribility", "of Simpleness"],
+      "Common": ["of Commonitude", "of Belongsinthebin-shire"],
+      "Fine": ["of Mediocrity", "of Couldbeworseiguess-ville"],
+      "Rare": ["of Nowwe'retalking-ton", "of Decentness"],
+      "Mythical": ["of Propergoodness", "of 'DAMN SON'"]
+    }
+    
+    var armourTypes = [
+      "Steel",
+      "Plate",
+      "Iron",
+      "Bronze",
+      "Copper",
+      "Silver"
+    ]
+    var nonArmourTypes = [
+      "Leather",
+      "Cloth",
+      "Cotton",
+      "Burlap",
+      "Cowhide",
+      "Deerhide",
+      "Goatskin"
+    ]
+    
+    var magicItemTypes = [
+      "Amulet",
+      "Ring1",
+      "Ring2"
+    ]
+      
+    var weaponTypes = [
+      "Main Hand",
+      "Shield",
+      "Two-Hand",
+      "Staff",
+      "Longbow",
+      "Shortbow",
+      "Crossbow"
+    ]
+    
+    var randomRanges = {
+      "Armour": {
+        "Simple": {
+          "Head": [0, 1],
+          "Hands": [0, 1],
+          "Feet": [0, 1],
+          "Legs": [0, 3],
+          "Chest": [0, 4]
+        },
+        "Common": {
+          "Head": [1, 3],
+          "Hands": [1, 3],
+          "Feet": [1, 3],
+          "Legs": [2, 6],
+          "Chest": [2, 7]
+        },
+        "Fine": {
+          "Head": [2, 5],
+          "Hands": [2, 5],
+          "Feet": [2, 5],
+          "Legs": [4, 12],
+          "Chest": [5, 14]
+        },
+        "Rare": {
+          "Head": [4, 12],
+          "Hands": [4, 12],
+          "Feet": [4, 12],
+          "Legs": [10, 20],
+          "Chest": [10, 25]
+        },
+        "Mythical": {
+          "Head": [10, 25],
+          "Hands": [10, 25],
+          "Feet": [10, 25],
+          "Legs": [20, 55],
+          "Chest": [20, 70]
+        },
+      },
+      "HealthMana": {
+        "Simple": [0, 1],
+        "Common": [1, 5],
+        "Fine": [5, 10],
+        "Rare": [10, 20],
+        "Mythical": [20, 40]
+      },
+      "SAM": {
+        "Simple": [0, 1],
+        "Common": [0, 2],
+        "Fine": [1, 5],
+        "Rare": [3, 10],
+        "Mythical": [5, 20]
+      },
+      "Special": {
+        "Simple": [0, 0],
+        "Common": [0, 0],
+        "Fine": [0, 2],
+        "Rare": [0, 10],
+        "Mythical": [5, 20]
+      }
+    }
+  
+    function randomBetween(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function makeItemName(armoured) {
+      var roll = randomBetween(0, 100)
+
+      if (roll >= 95)
+        var quality = "Mythical"
+      else if (roll >= 85)
+        var quality = "Rare"
+      else if (roll >= 70)
+        var quality = "Fine"
+      else if (roll >= 40)
+        var quality = "Common"
+      else
+        var quality = "Simple"
+
+      var suffix = suffixes[quality][randomBetween(0, suffixes[quality].length - 1)]
+      
+      if (armoured == "Armoured")
+        var material = armourTypes[randomBetween(0, armourTypes.length - 1)]
+      else
+        var material = nonArmourTypes[randomBetween(0, nonArmourTypes.length - 1)]
+      return [quality, suffix, material]
+    }
+
+    function makeItemAttributes(quality, slot) {
+      var range = randomRanges.Armour[quality][slot]
+      if (quality == "Mythical" || quality == "Rare") {
+        var roll1 = randomBetween(range[0], range[1])
+        var roll2 = randomBetween(range[0], range[1])
+        var armour = Math.max(roll1, roll2)
+      }
+      else {
+        var armour = randomBetween(range[0], range[1])
+      }
+      
+      var hmRange = randomRanges.HealthMana[quality]
+      var samRange = randomRanges.SAM[quality]
+      var specRange = randomRanges.Special[quality]
+      
+      var health = randomBetween(hmRange[0], hmRange[1])
+      var mana = randomBetween(hmRange[0], hmRange[1])
+      var strength = randomBetween(samRange[0], samRange[1])
+      var agility = randomBetween(samRange[0], samRange[1])
+      var magic = randomBetween(samRange[0], samRange[1])
+      
+      if (quality == "Fine") {
+        if (randomBetween(1,100) > 75)
+          var crit = randomBetween(specRange[0], specRange[1])
+        if (randomBetween(1,100) > 75)
+          var speed = randomBetween(specRange[0], specRange[1])
+      }
+      else if (quality == "Rare") {
+        if (randomBetween(1, 100) > 33)
+          var crit = randomBetween(specRange[0], specRange[1])
+        if (randomBetween(1, 100) > 33)
+          var speed = randomBetween(specRange[0], specRange[1])
+      }
+      else {
+        var crit = randomBetween(specRange[0], specRange[1])
+        var speed = randomBetween(specRange[0], specRange[1])
+      }
+      
+      return [armour, health, mana, strength, agility, magic, crit, speed]
+    }
+  
+    function getRandomItemType(givenSlot, givenArmour) {
+      if (givenSlot == "random")
+        givenSlot = undefined
+      var slot = givenSlot || Object.keys(Items)[randomBetween(0, Object.keys(Items).length - 1)]
+      var rndArmoured = "Non-Armoured"
+      if (randomBetween(0, 1) == 0)
+        rndArmoured = "Armoured"
+      var armoured = givenArmour || rndArmoured
+      
+      var item = Items[slot][armoured][randomBetween(0, Items[slot][armoured].length - 1)]
+      
+      var tempArr = makeItemName(armoured)
+      var quality = tempArr[0]
+      var suffix = tempArr[1]
+      var material = tempArr[2]
+      
+      var attr = makeItemAttributes(quality, slot)
+      var armour = attr[0]
+      var health = attr[1]
+      var mana = attr[2]
+      var strength = attr[3]
+      var agility = attr[4]
+      var magic = attr[5]
+      var crit = attr[6]
+      var speed = attr[7]
+      
+      var newItem = new Item(slot, quality, material, item, suffix, armour, health, mana, strength, agility, magic, crit, speed)
+      
+      return newItem
+    }
+    
+    function getItemClass(item) {
+      var colours = {"Simple": "simple", "Common": "common", "Fine": "fine", "Rare": "rare", "Mythical": "mythical"}
+      var qualityColour = colours[item.quality]
+      return qualityColour
+    }
+    
+    document.write("<div class=\"wrap\">")
+    
+    for (var i = 0; i < 60; i ++) {
+      var item = getRandomItemType()
+      var range = randomRanges.Armour[item.quality][item.slot]
+      
+      document.write("<div class=\"tooltip " + getItemClass(item) + "\">")
+      document.write("<h3>" + item.name + "</h3>")
+      document.write("<em>" + item.slot + "</em>")
+
+      if (item.health > 0 || item.mana > 0) {
+        document.write("<ul>")
+        if (item.armour > 0)
+          document.write("<li><em>+" + item.armour  + "</em> Armour")
+        if (item.health > 0)
+          document.write("<li><em>+" + item.health  + "</em> Health")
+        if (item.mana > 0)
+          document.write("<li><em>+" + item.mana  + "</em> Mana")
+        
+        document.write("</ul>")
+      }
+
+      if (item.strength > 0 || item.agility > 0 || item.magic > 0) {
+        document.write("<ul>")
+      
+        if (item.strength > 0)
+          document.write("<li><em>+" + item.strength  + "</em> Strength")
+        if (item.agility > 0)
+          document.write("<li><em>+" + item.agility  + "</em> Agility")
+        if (item.magic > 0)
+          document.write("<li><em>+" + item.magic  + "</em> Magic")
+        
+        document.write("</ul>")
+      }
+      
+      if (item.crit > 0 || item.speed > 0) {
+        document.write("<ul>")
+        if (item.crit > 0)
+          document.write("<li><em>+" + item.crit  + "% Critical Hit Chance</em>")
+        if (item.speed > 0)
+          document.write("<li><em>+" + item.speed  + "% Speed</em>")
+        document.write("</ul>")
+      }
+      
+      document.write("</div>")
+    }
+    
+    document.write("</div>")
+
+    var invTooltip = document.getElementById("inv-item-tooltip")
+    var invHead = document.getElementById("inv-item-head")
+    var invSlot = document.getElementById("inv-item-slot")
+    var invArmour = document.getElementById("inv-item-armour")
+    var invHealth = document.getElementById("inv-item-health")
+    var invMana = document.getElementById("inv-item-mana")
+    var invStrength = document.getElementById("inv-item-strength")
+    var invAgility = document.getElementById("inv-item-agility")
+    var invMagic = document.getElementById("inv-item-magic")
+    var invCrit = document.getElementById("inv-item-crit")
+    var invSpeed = document.getElementById("inv-item-speed")
+
+    var itemList = {
+      "Head": getRandomItemType("Head"), 
+      "Chest": getRandomItemType("Chest"),
+      "Hands": getRandomItemType("Hands"),
+      "Legs": getRandomItemType("Legs"),
+      "Feet": getRandomItemType("Feet")
+    }
+
+    function loadInvTooltip(slot) {
+      var item = itemList[slot]
+      console.log(item)
+
+      invTooltip.className = "tooltip " + item.quality.toLowerCase()
+
+      invHead.innerHTML = item.name
+      invSlot.innerHTML = item.slot
+      
+      if (item.armour > 0)
+        invArmour.innerHTML = "<em>+" + item.armour + "</em> Armour"
+      else 
+        invArmour.innerHTML = ""
+      
+      if (item.health > 0)
+        invHealth.innerHTML = "<em>+" + item.health + "</em> Health"
+      else 
+        invHealth.innerHTML = ""
+      
+      if (item.mana > 0)
+        invMana.innerHTML = "<em>+" + item.mana + "</em> Mana"
+      else 
+        invMana.innerHTML = ""
+      
+      if (item.strength > 0)
+        invStrength.innerHTML = "<em>+" + item.strength + "</em> Strength"
+      else 
+        invStrength.innerHTML = ""
+      
+      if (item.agility > 0)
+        invAgility.innerHTML = "<em>+" + item.agility + "</em> Agility"
+      else 
+        invAgility.innerHTML = ""
+      
+      if (item.magic > 0)
+        invMagic.innerHTML = "<em>+" + item.magic + "</em> Magic"
+      else 
+        invMagic.innerHTML = ""
+
+      if (item.crit > 0)
+        invCrit.innerHTML = "<em>+" + item.crit + "% Critical Hit Chance</em>"
+      else
+        invCrit.innerHTML = ""
+
+      if (item.speed > 0)
+        invSpeed.innerHTML = "<em>+" + item.speed + "% Speed</em>"
+      else
+        invSpeed.innerHTML = ""
+    }
+
+  </script>
+</body>
+</html>

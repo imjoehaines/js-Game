@@ -11,6 +11,7 @@ window.onload = function () {
   
   // Game States
   jsGame.state.add("menu", MenuState);
+  jsGame.state.add("itemTest", ItemTest);
   jsGame.state.add("play", PlayState);
   jsGame.state.add("fight", FightState);
 

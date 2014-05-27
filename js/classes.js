@@ -22,7 +22,7 @@ function Room(x, y, width, height) {
   }
 }
 
-function Actor(x, y, faction, curHP, maxHP, curMP, maxMP, strength, agility, magic) {
+function Actor(x, y, faction, curHP, maxHP, curMP, maxMP, strength, agility, magic, equipment) {
   this.x = x
   this.y = y
   this.faction = faction
@@ -33,6 +33,7 @@ function Actor(x, y, faction, curHP, maxHP, curMP, maxMP, strength, agility, mag
   this.strength = strength
   this.agility = agility
   this.magic = magic
+  this.inventory = new Inventory()
 
   this.moveTo = function(x, y) {
     if (!blocksMovement(map[y][x])) {
@@ -58,4 +59,68 @@ function Actor(x, y, faction, curHP, maxHP, curMP, maxMP, strength, agility, mag
     }
   } //moveTo
 
+  this.getEquippedItems = function() {
+    var items = this.inventory.getItems()
+    for (var i = 0; i < items.length; i++) {
+      console.log(items[i].slot + ": " + items[i].desc)
+    }
+  }
+
+  this.equipItem = function(newItem) {
+    console.log("replacing: '" + this.inventory[newItem.slot].desc
+      + "' with '" + newItem.desc + "'")
+    // if there's an item in that slot
+    if (this.inventory[newItem.slot]) {
+      this.inventory[newItem.slot] = newItem
+      console.log(this.inventory[newItem.slot])
+    }
+  }
+
 }
+
+function Inventory(head, chest, gloves, legs, boots, amulet, ring1, ring2, mainHand, offHand) {
+  this.head = head;
+  this.chest = chest;
+  this.gloves = gloves;
+  this.legs = legs;
+  this.boots = boots;
+  this.amulet = amulet;
+  this.ring1 = ring1;
+  this.ring2 = ring2;
+  this.mainHand = mainHand;
+  this.offHand = offHand;
+
+  this.getItems = function() {
+    var items = [this.head, this.chest, this.gloves, this.legs, this.boots,
+    this.amulet, this.ring1, this.ring2, this.mainHand, this.offHand]
+    return items
+  }
+}
+
+function Item(desc, slot, armour, strength, magic, agility, damage, speed, ranged) {
+  this.desc = desc;
+  this.slot = slot;
+  this.armour = armour || 0;
+  this.strength = strength || 0;
+  this.magic = magic || 0;
+  this.agility = agility || 0;
+  this.damage = damage || null;
+  this.speed = speed || null;
+  this.ranged = ranged || null;
+}
+
+/*    for(var i = 0; i < this.equipment.length; i ++) {
+      // if there's already an item in the slot, replace it
+      if(this.equipment[i].slot == newItem.slot) {
+        this.equipment[i] = newItem
+      }
+      // if the item is a 2handed weapon, remove the main- and off-hand
+      // items and equip the new one
+      else if(newItem.slot == "2hand" && (this.equipment[i].slot == "main-hand"
+        || this.equipment[i].slot == "off-hand")) {
+        this.equipment[i] = 1
+        this.equipment.push(newItem)
+      }
+        console.log(i + " | " + this.equipment[i].slot + ": " + this.equipment[i].desc)
+    }
+*/
