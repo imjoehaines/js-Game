@@ -173,7 +173,7 @@
     border-bottom: 1px solid rgba(0,0,0, 0.66);
   }
   
-  .inventory li:last-child {
+  .inv-items li:last-child {
     border: none;
   }
   
@@ -200,10 +200,115 @@
   .inventory .tooltip {
     position: absolute;
     left: 30px;
-    top: 15px;
+    top: 20px;
+    width: 400px;
     margin: auto;
   }
+
+  #inv-item-tooltip {
+    display: none;
+  }
   
+  .inventory .inv-bag-slots {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    width: 460px;
+  }
+
+  .inv-bag-row {
+    display: flex;
+    list-style: none;
+    width: 460px;
+  }
+
+  ul.inv-bag-row {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  .inv-bag-row li {
+    border-top: 1px solid rgba(0,0,0, 0.66);
+    border-right: 1px solid rgba(0,0,0, 0.66);
+    margin: 0;
+    padding: 5px 0;
+    height: 40px;
+    background: rgba(255,255,255, 0.66);
+  }
+
+  .inv-bag-row li:last-child {
+    border-right: none;
+  }
+
+  #inv-slot-head, #inv-slot-chest, #inv-slot-hands, #inv-slot-feet, #inv-slot-legs,
+  #inv-slot-amulet, #inv-slot-ring1, #inv-slot-ring2, #inv-slot-weapon, #inv-slot-shield {
+    position: relative;
+  }
+  #inv-slot-head:after, #inv-slot-chest:after, #inv-slot-hands:after, #inv-slot-feet:after, #inv-slot-legs:after,
+  #inv-slot-amulet:after, #inv-slot-ring1:after, #inv-slot-ring2:after, #inv-slot-weapon:after, #inv-slot-shield:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 5px;
+    z-index: 1;
+    background-image: url("img/icons/head.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+  }
+
+  #inv-slot-chest:after {
+    background-image: url("img/icons/chest.svg");
+  }
+  #inv-slot-hands:after {
+    background-image: url("img/icons/hands.svg");
+  }
+  #inv-slot-legs:after {
+    background-image: url("img/icons/legs.svg");
+  }
+  #inv-slot-feet:after {
+    background-image: url("img/icons/feet.svg");
+  }
+  #inv-slot-amulet:after {
+    background-image: url("img/icons/amulet.svg");
+  }
+  #inv-slot-ring1:after {
+    background-image: url("img/icons/ring.svg");
+  }
+  #inv-slot-ring2:after {
+    background-image: url("img/icons/ring.svg");
+  }
+  #inv-slot-weapon:after {
+    background-image: url("img/icons/weapon.svg");
+  }
+  #inv-slot-shield:after {
+    background-image: url("img/icons/shield.svg");
+  }
+
+  .inv-bag-slot-head {
+    position: relative;
+  }
+  .inv-bag-slot-head:after {
+    margin: 5px;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url("img/icons/head.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+  }
+
 </style>
 <body>
   <div class="wrap">
@@ -219,6 +324,7 @@
           <li>Feet: 25</li>
           <li>Legs: 55</li>
           <li>Chest: 70</li>
+          <li>Shield: 70</li>
         </ul>
         <ul>
           <li>Armour values divided by <em>x</em> per quality:</li>
@@ -264,6 +370,7 @@
       <h3 id="inv-item-head">Rare Plate Faulds of Nowwe'retalking-ton</h3>
       <em id="inv-item-slot">Legs</em>
       <ul>
+        <li id="inv-item-damage"><em>1</em> Damage</li>
         <li id="inv-item-armour"><em>+1</em> Armour</li>
         <li id="inv-item-health"><em>+1</em> Health</li>
         <li id="inv-item-mana"><em>+1</em> Mana</li>
@@ -278,22 +385,61 @@
         <li id="inv-item-speed"><em>+1% Speed</em></li>
       </ul>
     </div>
+
+    <div class="inv-bag-slots">
+      <ul class="inv-bag-row">
+        <li class="inv-bag-slot-head"></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+      <ul class="inv-bag-row">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+      <ul class="inv-bag-row">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
     
     <div class="inv-items-container">
       <ul class="inv-items">
-        <li class="inv-simple" onMouseOver="loadInvTooltip('Head')">Head</li>
-        <li class="inv-common" onMouseOver="loadInvTooltip('Chest')">Chest</li>
-        <li class="inv-fine" onMouseOver="loadInvTooltip('Hands')">Hands</li>
-        <li class="inv-rare" onMouseOver="loadInvTooltip('Legs')">Legs</li>
-        <li class="inv-mythical" onMouseOver="loadInvTooltip('Feet')">Feet</li>
+        <li class="inv-simple" id="inv-slot-head" onMouseOver="loadInvTooltip('Head')"></li>
+        <li class="inv-common" id="inv-slot-chest" onMouseOver="loadInvTooltip('Chest')"></li>
+        <li class="inv-fine" id="inv-slot-hands" onMouseOver="loadInvTooltip('Hands')"></li>
+        <li class="inv-rare" id="inv-slot-legs" onMouseOver="loadInvTooltip('Legs')"></li>
+        <li class="inv-mythical" id="inv-slot-feet" onMouseOver="loadInvTooltip('Feet')"></li>
       </ul>
   
       <ul class="inv-items">
-        <li class="inv-mythical">Amulet</li>
-        <li class="inv-rare">Ring 1</li>
-        <li class="inv-fine">Ring 2</li>
-        <li class="inv-common">Main Hand</li>
-        <li class="inv-simple">Off Hand</li>
+        <li class="inv-simple" id="inv-slot-amulet" onMouseOver="loadInvTooltip('Amulet')"></li>
+        <li class="inv-common" id="inv-slot-ring1" onMouseOver="loadInvTooltip('Ring1')"></li>
+        <li class="inv-fine" id="inv-slot-ring2" onMouseOver="loadInvTooltip('Ring2')"></li>
+        <li class="inv-rare" id="inv-slot-weapon" onMouseOver="loadInvTooltip('Weapon')"></li>
+        <li class="inv-mythical" id="inv-slot-shield" onMouseOver="loadInvTooltip('Shield')"></li>
       </ul>
     </div>
   </div>
@@ -302,7 +448,7 @@
 
   <script>
  
-    function Item(slot, quality, material, item, suffix, armour, health, mana, strength, agility, magic, crit, speed) {
+    function Item(slot, quality, material, item, suffix, armour, health, mana, strength, agility, magic, crit, speed, damage) {
       this.slot = slot
       this.quality = quality
       this.material = material
@@ -319,28 +465,42 @@
       this.magic = magic
       this.crit = crit
       this.speed = speed
+
+      this.damage = damage
     }
   
     var Items = {
       "Head": {
-        "Armoured": ["Helm", "Helmet", "Great Helm", "Armet", "Barbute", "Bascinet", "Hounskull", "Sallet", "Tiara", "Crown"],
-        "Non-Armoured": ["Hat", "Hood", "Wizard's Hat", "Cap"]
+        "Metallic": ["Helm", "Helmet", "Great Helm", "Armet", "Barbute", "Bascinet", "Hounskull", "Sallet", "Tiara", "Crown"],
+        "Non-Metallic": ["Hat", "Hood", "Wizard's Hat", "Cap"]
       },
       "Chest": {
-        "Armoured": ["Breastplate", "Hauberk", "Cuirass"],
-        "Non-Armoured": ["Surcoat", "Robe", "Coat", "Shirt", "Overcoat", "Jacket", "Dress"]
+        "Metallic": ["Breastplate", "Hauberk", "Cuirass"],
+        "Non-Metallic": ["Surcoat", "Robe", "Coat", "Shirt", "Overcoat", "Jacket", "Dress"]
       },
       "Hands": {
-        "Armoured": ["Gauntlets", "Demi-Guants", "Bracers"],
-        "Non-Armoured": ["Gloves", "Fingerless Gloves", "Mittens"]
+        "Metallic": ["Gauntlets", "Demi-Guants", "Bracers"],
+        "Non-Metallic": ["Gloves", "Fingerless Gloves", "Mittens"]
       },
       "Legs": {
-        "Armoured": ["Greaves", "Poleyns", "Faulds", "Tassets"],
-        "Non-Armoured": ["Leggings", "Trousers", "Shorts", "Loincloth"]
+        "Metallic": ["Greaves", "Poleyns", "Faulds", "Tassets", "Cuisses"],
+        "Non-Metallic": ["Leggings", "Trousers", "Shorts", "Loincloth"]
       },
       "Feet": {
-        "Armoured": ["Boots", "Sabatons"],
-        "Non-Armoured": ["Boots", "Shoes"]
+        "Metallic": ["Boots", "Sabatons"],
+        "Non-Metallic": ["Boots", "Shoes", "Moccasins", "Slippers"]
+      },
+      "Amulet": {
+        "Metallic": ["Chain", "Necklace", "Torc", "Charm"]
+      },
+      "Ring": {
+        "Metallic": ["Ring", "Hoop", "Loop"]
+      },
+      "Weapon": {
+        "Metallic": ["Sword", "Axe", "Rapier", "Mace", "Morningstar", "Hatchet", "Cutlass"]
+      },
+      "Shield": {
+        "Metallic": ["Shield", "Buckler", "Kite Shield"]
       }
     }
     console.log(Items)
@@ -361,15 +521,14 @@
       "Mythical": ["of Propergoodness", "of 'DAMN SON'"]
     }
     
-    var armourTypes = [
+    var metalTypes = [
       "Steel",
-      "Plate",
       "Iron",
       "Bronze",
       "Copper",
       "Silver"
     ]
-    var nonArmourTypes = [
+    var nonMetalTypes = [
       "Leather",
       "Cloth",
       "Cotton",
@@ -381,8 +540,7 @@
     
     var magicItemTypes = [
       "Amulet",
-      "Ring1",
-      "Ring2"
+      "Ring"
     ]
       
     var weaponTypes = [
@@ -402,35 +560,55 @@
           "Hands": [0, 1],
           "Feet": [0, 1],
           "Legs": [0, 3],
-          "Chest": [0, 4]
+          "Chest": [0, 4],
+          "Amulet": [0,0],
+          "Ring": [0,0],
+          "Weapon": [0,0],
+          "Shield": [1, 2]
         },
         "Common": {
           "Head": [1, 3],
           "Hands": [1, 3],
           "Feet": [1, 3],
           "Legs": [2, 6],
-          "Chest": [2, 7]
+          "Chest": [2, 7],
+          "Amulet": [0,0],
+          "Ring": [0,0],
+          "Weapon": [0,0],
+          "Shield": [4, 6]
         },
         "Fine": {
           "Head": [2, 5],
           "Hands": [2, 5],
           "Feet": [2, 5],
           "Legs": [4, 12],
-          "Chest": [5, 14]
+          "Chest": [5, 14],
+          "Amulet": [0,0],
+          "Ring": [0,0],
+          "Weapon": [0,0],
+          "Shield": [6, 12]
         },
         "Rare": {
           "Head": [4, 12],
           "Hands": [4, 12],
           "Feet": [4, 12],
           "Legs": [10, 20],
-          "Chest": [10, 25]
+          "Chest": [10, 25],
+          "Amulet": [0,0],
+          "Ring": [0,0],
+          "Weapon": [0,0],
+          "Shield": [12, 20]
         },
         "Mythical": {
           "Head": [10, 25],
           "Hands": [10, 25],
           "Feet": [10, 25],
           "Legs": [20, 55],
-          "Chest": [20, 70]
+          "Chest": [20, 70],
+          "Amulet": [0,0],
+          "Ring": [0,0],
+          "Weapon": [0,0],
+          "Shield": [30, 70]
         },
       },
       "HealthMana": {
@@ -453,6 +631,13 @@
         "Fine": [0, 2],
         "Rare": [0, 10],
         "Mythical": [5, 20]
+      },
+      "Damage": {
+        "Simple": [1, 3],
+        "Common": [2, 5],
+        "Fine": [4, 10],
+        "Rare": [10, 20],
+        "Mythical": [20, 30]
       }
     }
   
@@ -460,7 +645,7 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function makeItemName(armoured) {
+    function makeItemName(metallic) {
       var roll = randomBetween(0, 100)
 
       if (roll >= 95)
@@ -476,10 +661,10 @@
 
       var suffix = suffixes[quality][randomBetween(0, suffixes[quality].length - 1)]
       
-      if (armoured == "Armoured")
-        var material = armourTypes[randomBetween(0, armourTypes.length - 1)]
+      if (metallic == "Metallic")
+        var material = metalTypes[randomBetween(0, metalTypes.length - 1)]
       else
-        var material = nonArmourTypes[randomBetween(0, nonArmourTypes.length - 1)]
+        var material = nonMetalTypes[randomBetween(0, nonMetalTypes.length - 1)]
       return [quality, suffix, material]
     }
 
@@ -497,6 +682,7 @@
       var hmRange = randomRanges.HealthMana[quality]
       var samRange = randomRanges.SAM[quality]
       var specRange = randomRanges.Special[quality]
+      var damageRange = randomRanges.Damage[quality]
       
       var health = randomBetween(hmRange[0], hmRange[1])
       var mana = randomBetween(hmRange[0], hmRange[1])
@@ -520,22 +706,31 @@
         var crit = randomBetween(specRange[0], specRange[1])
         var speed = randomBetween(specRange[0], specRange[1])
       }
+
+      if (slot == "Weapon")
+        var damage = randomBetween(damageRange[0], damageRange[1])
+      else
+        var damage = 0
       
-      return [armour, health, mana, strength, agility, magic, crit, speed]
+      return [armour, health, mana, strength, agility, magic, crit, speed, damage]
     }
   
-    function getRandomItemType(givenSlot, givenArmour) {
+    function getRandomItemType(givenSlot, givenMetallic) {
       if (givenSlot == "random")
         givenSlot = undefined
       var slot = givenSlot || Object.keys(Items)[randomBetween(0, Object.keys(Items).length - 1)]
-      var rndArmoured = "Non-Armoured"
+
+      var rndMetallic = "Non-Metallic"
       if (randomBetween(0, 1) == 0)
-        rndArmoured = "Armoured"
-      var armoured = givenArmour || rndArmoured
+        rndMetallic = "Metallic"
+      if (slot == "Weapon" || slot == "Shield" || slot == "Amulet" || slot == "Ring")
+        rndMetallic = "Metallic"
+
+      var metallic = givenMetallic || rndMetallic
       
-      var item = Items[slot][armoured][randomBetween(0, Items[slot][armoured].length - 1)]
+      var item = Items[slot][metallic][randomBetween(0, Items[slot][metallic].length - 1)]
       
-      var tempArr = makeItemName(armoured)
+      var tempArr = makeItemName(metallic)
       var quality = tempArr[0]
       var suffix = tempArr[1]
       var material = tempArr[2]
@@ -549,8 +744,9 @@
       var magic = attr[5]
       var crit = attr[6]
       var speed = attr[7]
+      var damage = attr[8]
       
-      var newItem = new Item(slot, quality, material, item, suffix, armour, health, mana, strength, agility, magic, crit, speed)
+      var newItem = new Item(slot, quality, material, item, suffix, armour, health, mana, strength, agility, magic, crit, speed, damage)
       
       return newItem
     }
@@ -571,8 +767,10 @@
       document.write("<h3>" + item.name + "</h3>")
       document.write("<em>" + item.slot + "</em>")
 
-      if (item.health > 0 || item.mana > 0) {
+      if (item.damage > 0 || item.armour > 0 || item.health > 0 || item.mana > 0) {
         document.write("<ul>")
+        if (item.damage > 0)
+          document.write("<li><em>+" + item.damage  + "</em> Damage")
         if (item.armour > 0)
           document.write("<li><em>+" + item.armour  + "</em> Armour")
         if (item.health > 0)
@@ -613,6 +811,7 @@
     var invTooltip = document.getElementById("inv-item-tooltip")
     var invHead = document.getElementById("inv-item-head")
     var invSlot = document.getElementById("inv-item-slot")
+    var invDamage = document.getElementById("inv-item-damage")
     var invArmour = document.getElementById("inv-item-armour")
     var invHealth = document.getElementById("inv-item-health")
     var invMana = document.getElementById("inv-item-mana")
@@ -622,15 +821,66 @@
     var invCrit = document.getElementById("inv-item-crit")
     var invSpeed = document.getElementById("inv-item-speed")
 
+    var invSlotHead = document.getElementById("inv-slot-head")
+    var invSlotChest = document.getElementById("inv-slot-chest")
+    var invSlotHands = document.getElementById("inv-slot-hands")
+    var invSlotLegs = document.getElementById("inv-slot-legs")
+    var invSlotFeet = document.getElementById("inv-slot-feet")
+
+    var invSlotAmulet = document.getElementById("inv-slot-amulet")
+    var invSlotRing1 = document.getElementById("inv-slot-ring1")
+    var invSlotRing2 = document.getElementById("inv-slot-ring2")
+    var invSlotWeapon = document.getElementById("inv-slot-weapon")
+    var invSlotShield = document.getElementById("inv-slot-shield")
+
     var itemList = {
       "Head": getRandomItemType("Head"), 
       "Chest": getRandomItemType("Chest"),
       "Hands": getRandomItemType("Hands"),
       "Legs": getRandomItemType("Legs"),
-      "Feet": getRandomItemType("Feet")
+      "Feet": getRandomItemType("Feet"),
+
+      "Amulet": getRandomItemType("Amulet"),
+      "Ring1": getRandomItemType("Ring"),
+      "Ring2": getRandomItemType("Ring"),
+      "Weapon": getRandomItemType("Weapon"),
+      "Shield": getRandomItemType("Shield")
     }
 
+    var itemQualityColours = {
+      "Simple": "#aaa",
+      "Common": "#10B47D",
+      "Fine": "#124385",
+      "Rare": "#BF538D",
+      "Mythical": "#FFC83F"
+    }
+
+    var itemSlotElements = {
+      "Head": document.getElementById("inv-slot-head"),
+      "Chest": document.getElementById("inv-slot-chest"),
+      "Hands": document.getElementById("inv-slot-hands"),
+      "Legs": document.getElementById("inv-slot-legs"),
+      "Feet": document.getElementById("inv-slot-feet"),
+
+      "Amulet": document.getElementById("inv-slot-amulet"),
+      "Ring1": document.getElementById("inv-slot-ring1"),
+      "Ring2": document.getElementById("inv-slot-ring2"),
+      "Weapon": document.getElementById("inv-slot-weapon"),
+      "Shield": document.getElementById("inv-slot-shield")
+    }
+
+    function setInvSlotBackgrounds() {
+      for (var slot in itemList) {
+        console.log(slot)
+        var item = itemList[slot]
+        itemSlotElements[slot].className = "inv-" + item.quality.toLowerCase()
+      }
+    }
+
+    setInvSlotBackgrounds()
+
     function loadInvTooltip(slot) {
+      invTooltip.style.display = "block"
       var item = itemList[slot]
       console.log(item)
 
@@ -639,6 +889,11 @@
       invHead.innerHTML = item.name
       invSlot.innerHTML = item.slot
       
+      if (item.damage > 0)
+        invDamage.innerHTML = "<em>+" + item.damage + "</em> Damage"
+      else 
+        invDamage.innerHTML = ""
+
       if (item.armour > 0)
         invArmour.innerHTML = "<em>+" + item.armour + "</em> Armour"
       else 
