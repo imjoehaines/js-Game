@@ -1,52 +1,128 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>GAME</title>
+        <link href="style.css" rel="stylesheet" type="text/css" media="all" />
+        <link href='http://fonts.googleapis.com/css?family=Karla:400,400italic' rel='stylesheet' type='text/css'>
+            <script src="js/phaser.min.js"></script>
+            
+            <script src="js/game.js"></script>
+            <script src="js/classes.js"></script>
+            <script src="js/menu.js"></script>
+            <script src="js/play.js"></script>
+            <script src="js/fight.js"></script>
+            <script src="js/itemStuff.js"></script>
+        </head>
+        <body>
+            <div class="container">
+                <div id="gameContainer"></div>
 
-  <title>GAME</title>
+                <div id="ui">
+                    <ul>
+                        <li>
+                            <p>Health: <em id="hpDisp">0</em></p>
+                        </li>
+                        <li>
+                            <p>Mana: <em id="mpDisp">0</em></p>
+                        </li>
+                        <li>
+                            <p>Armour: <em id="armDisp">0</em></p>
+                        </li>
+                        <li>
+                            <p>Strength: <em id="strDisp">0</em></p>
+                        </li>
+                        <li>
+                            <p>Agility: <em id="agiDisp">0</em></p>
+                        </li>
+                        <li>
+                            <p>Magic: <em id="magDisp">0</em></p>
+                        </li>
+                    </ul>
+                </div>
 
-  <link href="style.css" rel="stylesheet" type="text/css" media="all" />
-
-  <script src="js/phaser.min.js"></script>
-  
-  <script src="js/game.js"></script>
-  <script src="js/classes.js"></script>
-  <script src="js/menu.js"></script>
-  <script src="js/play.js"></script>
-  <script src="js/fight.js"></script>
-  <script src="js/itemtest.js"></script>
-</head>
-<body>
-
-  <div class="container">
-    <div id="gameContainer">
-
-    </div>
-    
-    <div id="ui">
-      <ul>
-        <li>
-          <p>Health: <em id="hpDisp">0</em></p>
-        </li>
-        <li>
-          <p>Mana: <em id="mpDisp">0</em></p>
-        </li>
-        <li>
-          <p>Armour: <em id="armDisp">0</em></p>
-        </li>
-        <li>
-          <p>Strength: <em id="strDisp">0</em></p>
-        </li>
-        <li>
-          <p>Agility: <em id="agiDisp">0</em></p>
-        </li>
-        <li>
-          <p>Magic: <em id="magDisp">0</em></p>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-</body>
-</html>
+                <div id="inv-container">
+                    <div class="inventory">
+                        <div class="player"></div>
+                        
+                        <div class="tooltip rare" id="inv-item-tooltip">
+                            <h3 id="inv-item-head">Rare Plate Faulds of Nowwe'retalking-ton</h3>
+                            <em id="inv-item-slot">Legs</em>
+                            <ul>
+                                <li id="inv-item-damage"><em>1</em> Damage</li>
+                                <li id="inv-item-armour"><em>+1</em> Armour</li>
+                                <li id="inv-item-health"><em>+1</em> Health</li>
+                                <li id="inv-item-mana"><em>+1</em> Mana</li>
+                            </ul>
+                            <ul>
+                                <li id="inv-item-strength"><em>+1</em> Strength</li>
+                                <li id="inv-item-agility"><em>+1</em> Agility</li>
+                                <li id="inv-item-magic"><em>+1</em> Magic</li>
+                            </ul>
+                            <ul>
+                                <li id="inv-item-crit"><em>+1% Critical Hit Chance</em></li>
+                                <li id="inv-item-speed"><em>+1% Speed</em></li>
+                            </ul>
+                        </div>
+                        <div class="inv-bag-slots">
+                            <ul class="inv-bag-row">
+                                <li class="inv-bag-slot-head"></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                            <ul class="inv-bag-row">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                            <ul class="inv-bag-row">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="inv-items-container">
+                            <ul class="inv-items">
+                                <li class="inv-simple" id="inv-slot-head" onMouseOver="loadInvTooltip('head')"></li>
+                                <li class="inv-common" id="inv-slot-chest" onMouseOver="loadInvTooltip('chest')"></li>
+                                <li class="inv-fine" id="inv-slot-hands" onMouseOver="loadInvTooltip('hands')"></li>
+                                <li class="inv-rare" id="inv-slot-legs" onMouseOver="loadInvTooltip('legs')"></li>
+                                <li class="inv-mythical" id="inv-slot-feet" onMouseOver="loadInvTooltip('feet')"></li>
+                            </ul>
+                            
+                            <ul class="inv-items">
+                                <li class="inv-simple" id="inv-slot-amulet" onMouseOver="loadInvTooltip('amulet')"></li>
+                                <li class="inv-common" id="inv-slot-ring" onMouseOver="loadInvTooltip('ring')"></li>
+                                <li class="inv-fine" id="inv-slot-belt" onMouseOver="loadInvTooltip('belt')"></li>
+                                <li class="inv-rare" id="inv-slot-weapon" onMouseOver="loadInvTooltip('weapon')"></li>
+                                <li class="inv-mythical" id="inv-slot-shield" onMouseOver="loadInvTooltip('shield')"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>

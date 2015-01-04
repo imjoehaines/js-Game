@@ -232,8 +232,8 @@
   }
 
   .inv-bag-row li {
-    border-top: 1px solid rgba(0,0,0, 0.66);
-    border-right: 1px solid rgba(0,0,0, 0.66);
+    border-top: 1px solid rgba(0,0,0, 0.15);
+    border-right: 1px solid rgba(0,0,0, 0.5);
     margin: 0;
     padding: 5px 0;
     height: 40px;
@@ -750,20 +750,14 @@
       
       return newItem
     }
-    
-    function getItemClass(item) {
-      var colours = {"Simple": "simple", "Common": "common", "Fine": "fine", "Rare": "rare", "Mythical": "mythical"}
-      var qualityColour = colours[item.quality]
-      return qualityColour
-    }
-    
+      
     document.write("<div class=\"wrap\">")
     
     for (var i = 0; i < 60; i ++) {
       var item = getRandomItemType()
       var range = randomRanges.Armour[item.quality][item.slot]
       
-      document.write("<div class=\"tooltip " + getItemClass(item) + "\">")
+      document.write("<div class=\"tooltip " + item.quality.toLowerCase() + "\">")
       document.write("<h3>" + item.name + "</h3>")
       document.write("<em>" + item.slot + "</em>")
 

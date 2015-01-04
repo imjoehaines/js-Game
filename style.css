@@ -1,58 +1,315 @@
+@font-face {
+    font-family: 'Karla';
+    src: url('font/Karla-Regular.ttf') format('truetype');
+/*    font-weight: normal;
+    font-style: normal;
+*/}
+
+* {
+    box-sizing: border-box;
+}
+
+
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    font-family: Karla, Calibri, "Open Sans", Roboto, Lato, "Droid Sans", "PT Sans", sans-serif
+
 }
 
 .container {
-  width: 800px;
-  margin: 0 auto;
-  margin-top: 1em;
-  position: relative;
-}
-
-#gameContainer {
-  /*position: absolute;*/
+    width: 800px;
+    margin: 0 auto;
+    position: relative;
 }
 
 #ui {
-  display: flex;
-  justify-content: space-around;
-  z-index: 1;
-  position: absolute;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.66);
-  width: 800px;
-  font-family: Calibri, "Open Sans", Roboto, Lato, "Droid Sans", "PT Sans", Ubuntu, sans-serif
+    display: flex;
+    justify-content: space-around;
+    z-index: 1;
+    position: absolute;
+    bottom: 0;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.66);
+    width: 800px;
 }
 
 #ui ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
 }
 
 #ui li {
-  float: left;
-  margin: auto; 
-  padding: 0.5em 1.5em;
-  overflow: hidden;
+    float: left;
+    margin: auto; 
+    padding: 0.5em 1.5em;
+    overflow: hidden;
 }
 
 #ui p {
-  margin: 0;
+    margin: 0;
 }
 
-em {
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
-  font-style: normal;
-  font-weight: bold;
-  color: #000066;
+#ui em, .tooltip ul em {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+    font-style: normal;
+    font-weight: bold;
+    color: #000066;
 }
 
 a {
-  color: #000066;
-  text-decoration: none;
+    color: #000066;
+    text-decoration: none;
 }
+
+/* INVENTORY */
+
+#inv-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+    width: 716px;
+    height: 480px;
+    display: none;
+}
+
+.inventory {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.66);
+    border: 5px solid rgba(0,0,0, 0.66);
+}
+
+.inventory .player {
+    height: 400px;
+    width: 400px;
+    margin: 30px;
+    background-image: url("img/paladin.gif");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+  
+.inventory ul.inv-items {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    list-style-type: none;
+    border-left: 5px solid rgba(0,0,0, 0.66);
+}
+  
+.inventory  ul.inv-items:last-child {
+    border-width: 1px;
+}
+  
+.inventory .inv-items li {
+    width: 120px;
+    height: 94px;
+    line-height: 94px;
+    border-bottom: 1px solid rgba(0,0,0, 0.66);
+}
+  
+.inv-items li:last-child {
+    border: none;
+}
+  
+.inv-simple {
+    background: rgba(170, 170, 170, 0.5);
+}
+.inv-common {
+    background: rgba(16, 180, 125, 0.5);
+}
+.inv-fine {
+    background: rgba(18, 67, 133, 0.5);
+}
+.inv-rare {
+    background: rgba(191, 83, 141, 0.5);
+}
+.inv-mythical {
+    background: rgba(255, 200, 63, 0.5);
+}
+  
+.inv-items-container {
+    display: flex;
+}
+  
+.inventory .tooltip {
+    position: absolute;
+    left: 30px;
+    top: 20px;
+    width: 400px;
+    margin: auto;
+}
+
+#inv-item-tooltip {
+    display: none;
+}
+  
+.inventory .inv-bag-slots {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    width: 460px;
+}
+
+.inv-bag-row {
+    display: flex;
+    list-style: none;
+    width: 460px;
+}
+
+  ul.inv-bag-row {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.inv-bag-row li {
+    border-top: 1px solid rgba(0,0,0, 0.15);
+    border-right: 1px solid rgba(0,0,0, 0.5);
+    margin: 0;
+    padding: 5px 0;
+    height: 40px;
+    background: rgba(255,255,255, 0.66);
+    font-size: 1.25em;
+    flex-grow: 1;
+}
+
+.inv-bag-row li:last-child {
+    border-right: none;
+}
+
+#inv-slot-head, #inv-slot-chest, #inv-slot-hands, #inv-slot-feet, #inv-slot-legs,
+#inv-slot-amulet, #inv-slot-ring, #inv-slot-belt, #inv-slot-weapon, #inv-slot-shield {
+    position: relative;
+}
+#inv-slot-head:after, #inv-slot-chest:after, #inv-slot-hands:after, #inv-slot-feet:after, #inv-slot-legs:after,
+#inv-slot-amulet:after, #inv-slot-ring:after, #inv-slot-belt:after, #inv-slot-weapon:after, #inv-slot-shield:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 5px;
+    z-index: 1;
+    background-image: url("img/icons/head.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+#inv-slot-chest:after {
+    background-image: url("img/icons/chest.svg");
+}
+#inv-slot-hands:after {
+    background-image: url("img/icons/hands.svg");
+}
+#inv-slot-legs:after {
+    background-image: url("img/icons/legs.svg");
+}
+#inv-slot-feet:after {
+    background-image: url("img/icons/feet.svg");
+}
+#inv-slot-amulet:after {
+    background-image: url("img/icons/amulet.svg");
+}
+#inv-slot-ring:after {
+    background-image: url("img/icons/ring.svg");
+}
+#inv-slot-belt:after {
+    background-image: url("img/icons/belt.svg");
+}
+#inv-slot-weapon:after {
+    background-image: url("img/icons/weapon.svg");
+}
+#inv-slot-shield:after {
+    background-image: url("img/icons/shield.svg");
+}
+
+.inv-bag-slot-head {
+    position: relative;
+}
+.inv-bag-slot-head:after {
+    margin: 5px;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url("img/icons/head.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.tooltip {
+    max-width: 400px;
+    margin: 0.5em;
+    padding: 0.5em;
+    background: rgba(255, 255, 255, 0.66);
+    color: #111;
+    font-size: 1.25em;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+    flex-grow: 1;
+}
+
+.tooltip h3 {
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+.tooltip ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.75em;
+}
+.tooltip ul em {
+    font-style: normal;
+    color: #000066;
+}
+
+.tooltip.simple, .tooltip.common, .tooltip.fine, .tooltip.rare, .tooltip.mythical {
+    border: 5px solid;
+    border-radius: 5px;
+}
+
+.tooltip.simple {
+    border-color: #aaa;
+}
+.tooltip.common {
+    border-color: #10B47D;
+}
+.tooltip.fine {
+    border-color: #124385;
+}
+.tooltip.rare {
+    border-color: #BF538D;
+    box-shadow: 0 0 0.5em #BF538D;
+}
+.tooltip.mythical {
+    border-color: #FFC83F;
+    box-shadow: 0 0 2em #FFC83F, inset 0 0 1em #FFC83F;
+}
+
+
+
+
+
 
 /* CSS-Loaders by Luke Haas */
 /* https://github.com/lukehaas/css-loaders */
@@ -80,40 +337,42 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 .loader {
-  margin: 6em auto;
-  font-size: 10px;
-  position: relative;
-  text-indent: -9999em;
-  border-top: 1.1em solid rgba(255, 255, 255, 0.2);
-  border-right: 1.1em solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
-  border-left: 1.1em solid #ffffff;
-  -webkit-animation: load8 1.1s infinite linear;
-  animation: load8 1.1s infinite linear;
+    margin: 6em auto;
+    font-size: 10px;
+    position: relative;
+    direction: ltr;
+    text-indent: -9999em;
+    border: 1.1em solid #ccc;
+    border: 1.1em solid rgba(0, 0, 0, 0.2);
+    border-left: 1.1em solid #000;
+    box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.2);
+    -moz-animation: load8 1.1s infinite linear;
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
 }
 .loader,
 .loader:after {
-  border-radius: 50%;
-  width: 10em;
-  height: 10em;
+    border-radius: 50%;
+    width: 10em;
+    height: 10em;
 }
 @-webkit-keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
   }
 }
 @keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
