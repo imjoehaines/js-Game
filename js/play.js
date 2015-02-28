@@ -351,9 +351,10 @@ function placeEnemies() {
         for (var x = 0; x < NoColumns; x++)
             if (map[y][x] == grassChar && !(x == player.x && y == player.y))
                 if (randomBetween(1, 100) > 98) {
-                    var hp = randomBetween(2, 10);
-                    var mp = randomBetween(1, 5);
-                    var newEnemy = new Actor(x, y, "enemy", hp, hp, mp, mp, randomBetween(1, 5), randomBetween(1, 5), randomBetween(1, 5), null);
+                    var hp = randomBetween(1, 100);
+                    var mp = randomBetween(1, 50);
+                    var newEnemy = new Actor(x, y, "enemy", hp, hp, mp, mp,
+                        randomBetween(1, 50), randomBetween(1, 50), randomBetween(1, 50), null);
                     allEnemies.push(newEnemy);
                 }
 }

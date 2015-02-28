@@ -361,7 +361,6 @@ function getRandomItemType(givenSlot, givenMetallic) {
 function setInvSlotBackgrounds(inventory) {
     for (var slot in inventory) {
         if (typeof(inventory[slot]) == "object") {
-            console.log(slot, itemSlotElements[slot])
             itemSlotElements[slot].className = "inv-" + inventory[slot].quality.toLowerCase();
         }
     }

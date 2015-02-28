@@ -93,7 +93,7 @@ function Actor(x, y, faction, curHP, baseMaxHP, curMP, baseMaxMP, strength, agil
 
         this.updateStats = function() {
             var items = this.inventory.getItems();
-            console.log(items)
+
             var strengthFromItems = 0,
                 agilityFromItems = 0,
                 magicFromItems = 0,

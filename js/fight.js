@@ -85,7 +85,7 @@ FightState.prototype = {
         player.mpBarMax = jsGame.add.sprite(player.sprite.x * 1.9, player.sprite.y - 48, "mpBarMax");
         player.mpBarMax.scale.x = 200;
         player.mpBar = jsGame.add.sprite(player.mpBarMax.x, player.mpBarMax.y, "mpBar");
-        player.mpBar.scale.x = (player.curHP / player.totalMaxHP) * 200;
+        player.mpBar.scale.x = (player.curMP / player.totalMaxMP) * 200;
 
         enemy.hpBarMax = jsGame.add.sprite(enemy.sprite.x * 0.85, enemy.sprite.y + (enemy.sprite.height / 2.5), "hpBarMax");
         enemy.hpBarMax.scale.x = 200;
@@ -166,8 +166,8 @@ function confirmCommand() {
         console.log("attack");
 
         jsGame.input.disabled = true;
-        attackEnemy();
         disableMenus();
+        attackEnemy();
     } else if (indicatorText.y == magicText.y) {
         console.log("magic");
     } else {
@@ -185,8 +185,12 @@ function attackEnemy() {
     enemyIdle.pause();
 
     enemy.curHP -= player.damage;
-    updateHP(enemy);
     player.curHP -= enemy.damage;
+
+    if (enemy.curHP < 0) enemy.curHP = 0;
+    if (player.curHP < 0) player.curHP = 0;
+
+    updateHP(enemy);
     updateHP(player);
 
     var attack = jsGame.add.tween(player.sprite).to({
@@ -197,9 +201,6 @@ function attackEnemy() {
 
     player.sprite.bringToTop();
 
-    attack.onComplete.add(function() {
-        playerIdle.resume();
-    }, null);
 
     if (enemy.curHP > 0) {
         var reaction = jsGame.add.tween(enemy.sprite).to({
@@ -213,6 +214,14 @@ function attackEnemy() {
         }, null);
     } else {
         killEnemy();
+    }
+
+    if (player.curHP > 0) {
+        attack.onComplete.add(function() {
+            playerIdle.resume();
+        }, null);
+    } else {
+        killPlayer();
     }
 }
 
@@ -246,6 +255,38 @@ function killEnemy() {
         jsGame.state.start("play");
     }, 3000);
 }
+
+function killPlayer() {
+    jsGame.input.disabled = true;
+    combatOver = true;
+
+    combatText = jsGame.add.text(jsGame.world.centerX, jsGame.world.centerY, "You Died!", style);
+    combatText.anchor.setTo(0.5, 0.5);
+
+    enemyIdle.stop();
+    playerIdle.stop();
+
+    var dying1 = jsGame.add.tween(player.sprite.scale).to({
+            x: 0,
+            y: 0
+        },
+        2500, Phaser.Easing.Cubic.In, true, 0, 0, false);
+    var dying2 = jsGame.add.tween(player.sprite).to({
+            angle: 360
+        },
+        250, Phaser.Easing.Linear.None, true, 0, Number.MAX_VALUE, false);
+    var dying3 = jsGame.add.tween(player.sprite).to({
+            alpha: 0
+        },
+        2500, Phaser.Easing.Linear.None, true, 0, 0, false);
+
+    setTimeout(function() {
+        player.sprite.destroy();
+        jsGame.state.start("play");
+    }, 3000);
+}
+
+
 
 function updateHP(actor) {
     if (actor.hpText) {
