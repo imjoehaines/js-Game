@@ -139,7 +139,7 @@ function fightKeyPress(event) {
         moveIndicator(true);
     } else if (event.keyCode == Phaser.Keyboard.UP) {
         moveIndicator(false);
-    } else if (event.keyCode == Phaser.Keyboard.ENTER) {
+    } else if (event.keyCode == Phaser.Keyboard.ENTER || event.keyCode == Phaser.Keyboard.SPACEBAR) {
         confirmCommand();
     }
 }
