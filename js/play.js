@@ -272,7 +272,7 @@ function grassNeighbours(y, x) {
     if (y > 0 && y < 1280 && x > 0 && x < 1600) {
         if (map[y][x] == grassChar || map[y][x] == grassAltChar) {
             if (map[y + 1][x] == wallChar && (map[y + 2][x] == grassChar || map[y + 2][x] == grassAltChar))
-                neighbours = "h2"; //wall with grass on 2 sides 
+                neighbours = "h2"; //wall with grass on 2 sides
             else if (map[y + 1][x] == wallChar && map[y - 1][x] == wallChar)
                 neighbours = "hthb"; //wall with grass above and below
             else if (map[y][x + 1] == wallChar && (map[y][x + 2] == grassChar || map[y][x + 2] == grassAltChar))
@@ -319,7 +319,21 @@ function initPlayer() {
     playerInventory = new Inventory(itemList.Head, itemList.Chest, itemList.Hands,
         itemList.Legs, itemList.Feet, itemList.Amulet, itemList.Ring,
         itemList.Belt, itemList.Weapon, itemList.Shield);
-    player = new Actor(playerStartLoc[1], playerStartLoc[0], "player", 50, 50, 10, 10, 5, 5, 5, playerInventory);
+
+    player = new Actor({
+        x: playerStartLoc[0],
+        y: playerStartLoc[1],
+        faction: "player",
+        curHP: 50,
+        baseMaxHP: 50,
+        curMP: 10,
+        baseMaxMP: 10,
+        strength: 5,
+        agility: 5,
+        magic: 5,
+        inventory: playerInventory
+    });
+
     updateUiStats();
 }
 
@@ -343,7 +357,7 @@ function blocksMovement(tile) {
     // occurences of the given tile (i.e. it's in the array)
 
     return (spritesBlockMovement.indexOf(tile) > -1);
-        //return false // for testing allow movement anywhere 
+        //return false // for testing allow movement anywhere
 }
 
 function placeEnemies() {
@@ -353,8 +367,21 @@ function placeEnemies() {
                 if (randomBetween(1, 100) > 98) {
                     var hp = randomBetween(1, 100);
                     var mp = randomBetween(1, 50);
-                    var newEnemy = new Actor(x, y, "enemy", hp, hp, mp, mp,
-                        randomBetween(1, 50), randomBetween(1, 50), randomBetween(1, 50), null);
+
+                    var newEnemy = new Actor({
+                        x: x,
+                        y: y,
+                        faction: "enemy",
+                        curHP: hp,
+                        baseMaxHP: hp,
+                        curMP: mp,
+                        baseMaxMP: mp,
+                        strength: randomBetween(1, 50),
+                        agility: randomBetween(1, 50),
+                        magic: randomBetween(1, 50),
+                        inventory: null
+                    });
+
                     allEnemies.push(newEnemy);
                 }
 }
@@ -384,7 +411,7 @@ function collideWithOther(futureX, futureY) {
     // if the player is at the furtureX & futureY corrds
     if (futureX == player.x && futureY == player.y) {
         return player;
-    } else { // check each enemy's location 
+    } else { // check each enemy's location
         for (var i = 0; i < allEnemies.length; i++) {
             if (futureX == allEnemies[i].x && futureY == allEnemies[i].y) {
                 return allEnemies[i];

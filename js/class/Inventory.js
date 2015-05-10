@@ -9,7 +9,6 @@ function Inventory(head, chest, hands, legs, feet, amulet, ring, belt, weapon, s
     this.belt = belt;
     this.weapon = weapon;
     this.shield = shield;
-
 }
 
 Inventory.prototype.getItems = function() {

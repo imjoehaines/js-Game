@@ -1,24 +1,23 @@
-function Actor(x, y, faction, curHP, baseMaxHP, curMP, baseMaxMP, strength, agility, magic, inventory) {
-    this.x = x;
-    this.y = y;
-    this.faction = faction;
-    this.curHP = curHP;
-    this.baseMaxHP = baseMaxHP;
-    this.curMP = curMP;
-    this.baseMaxMP = baseMaxMP;
-    this.strength = strength;
-    this.agility = agility;
-    this.magic = magic;
-    this.inventory = inventory;
+function Actor(options) {
+    this.x = options.x;
+    this.y = options.y;
+    this.faction = options.faction;
+    this.curHP = options.curHP;
+    this.baseMaxHP = options.baseMaxHP;
+    this.curMP = options.curMP;
+    this.baseMaxMP = options.baseMaxMP;
+    this.strength = options.strength;
+    this.agility = options.agility;
+    this.magic = options.magic;
+    this.inventory = options.inventory;
 
-    this.totalStrength = strength;
-    this.totalAgility = agility;
-    this.totalMagic = magic;
+    this.totalStrength = this.strength;
+    this.totalAgility = this.agility;
+    this.totalMagic = this.magic;
     this.armour = 0;
-    this.totalMaxHP = baseMaxHP;
-    this.totalMaxMP = baseMaxMP;
-
-    this.damage = strength;
+    this.totalMaxHP = this.baseMaxHP;
+    this.totalMaxMP = this.baseMaxMP;
+    this.damage = this.strength;
 
     if (this.inventory) {
         // update stats as soon as actor is made
