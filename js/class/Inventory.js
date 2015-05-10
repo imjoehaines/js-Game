@@ -1,14 +1,14 @@
-function Inventory(head, chest, hands, legs, feet, amulet, ring, belt, weapon, shield) {
-    this.head = head;
-    this.chest = chest;
-    this.hands = hands;
-    this.legs = legs;
-    this.feet = feet;
-    this.amulet = amulet;
-    this.ring = ring;
-    this.belt = belt;
-    this.weapon = weapon;
-    this.shield = shield;
+function Inventory(items) {
+    this.head = items.head;
+    this.chest = items.chest;
+    this.hands = items.hands;
+    this.legs = items.legs;
+    this.feet = items.feet;
+    this.amulet = items.amulet;
+    this.ring = items.ring;
+    this.belt = items.belt;
+    this.weapon = items.weapon;
+    this.shield = items.shield;
 }
 
 Inventory.prototype.getItems = function() {

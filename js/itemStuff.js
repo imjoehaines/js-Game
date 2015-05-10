@@ -74,7 +74,7 @@ var magicItemTypes = [
     "Amulet",
     "Ring"
 ];
-  
+
 var weaponTypes = [
     "Main Hand",
     "Shield",
@@ -179,7 +179,7 @@ var randomRanges = {
 };
 
 var itemList = {
-    "Head": getRandomItemType("Head"), 
+    "Head": getRandomItemType("Head"),
     "Chest": getRandomItemType("Chest"),
     "Hands": getRandomItemType("Hands"),
     "Legs": getRandomItemType("Legs"),
@@ -204,37 +204,37 @@ function loadInvTooltip(slot) {
 
     if (item.damage > 0)
         invDamage.innerHTML = "<em>+" + item.damage + "</em> Damage";
-    else 
+    else
         invDamage.innerHTML = "";
 
     if (item.armour > 0)
         invArmour.innerHTML = "<em>+" + item.armour + "</em> Armour";
-    else 
+    else
         invArmour.innerHTML = "";
 
     if (item.health > 0)
         invHealth.innerHTML = "<em>+" + item.health + "</em> Health";
-    else 
+    else
         invHealth.innerHTML = "";
 
     if (item.mana > 0)
         invMana.innerHTML = "<em>+" + item.mana + "</em> Mana";
-    else 
+    else
         invMana.innerHTML = "";
 
     if (item.strength > 0)
         invStrength.innerHTML = "<em>+" + item.strength + "</em> Strength";
-    else 
+    else
         invStrength.innerHTML = "";
 
     if (item.agility > 0)
         invAgility.innerHTML = "<em>+" + item.agility + "</em> Agility";
-    else 
+    else
         invAgility.innerHTML = "";
 
     if (item.magic > 0)
         invMagic.innerHTML = "<em>+" + item.magic + "</em> Magic";
-    else 
+    else
         invMagic.innerHTML = "";
 
     if (item.crit > 0)
@@ -353,7 +353,22 @@ function getRandomItemType(givenSlot, givenMetallic) {
     var speed = attr[7];
     var damage = attr[8];
 
-    var newItem = new Item(slot, quality, material, item, suffix, armour, health, mana, strength, agility, magic, crit, speed, damage);
+    var newItem = new Item({
+        slot: slot,
+        quality: quality,
+        material: material,
+        item: item,
+        suffix: suffix,
+        armour: armour,
+        health: health,
+        mana: mana,
+        strength: strength,
+        agility: agility,
+        magic: magic,
+        crit: crit,
+        speed: speed,
+        damage: damage
+    });
 
     return newItem;
 }

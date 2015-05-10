@@ -316,9 +316,18 @@ function drawMap() {
 }
 
 function initPlayer() {
-    playerInventory = new Inventory(itemList.Head, itemList.Chest, itemList.Hands,
-        itemList.Legs, itemList.Feet, itemList.Amulet, itemList.Ring,
-        itemList.Belt, itemList.Weapon, itemList.Shield);
+    playerInventory = new Inventory({
+        head: itemList.Head,
+        chest: itemList.Chest,
+        hands: itemList.Hands,
+        legs: itemList.Legs,
+        feet: itemList.Feet,
+        amulet: itemList.Amulet,
+        ring: itemList.Ring,
+        belt: itemList.Belt,
+        weapon: itemList.Weapon,
+        shield: itemList.Shield
+   });
 
     player = new Actor({
         x: playerStartLoc[0],
