@@ -1,3 +1,8 @@
+// better random ints
+function randomBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 window.onload = function() {
     hpDisplay = document.getElementById("hpDisp");
     mpDisplay = document.getElementById("mpDisp");
@@ -25,7 +30,7 @@ window.onload = function() {
     invSlotHands = document.getElementById("inv-slot-hands");
     invSlotLegs = document.getElementById("inv-slot-legs");
     invSlotFeet = document.getElementById("inv-slot-feet");
-    
+
     itemSlotElements = {
         "head": document.getElementById("inv-slot-head"),
         "chest": document.getElementById("inv-slot-chest"),

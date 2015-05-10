@@ -7,9 +7,12 @@
         <link href="style.css" rel="stylesheet" type="text/css" media="all" />
         <link href='http://fonts.googleapis.com/css?family=Karla:400,400italic' rel='stylesheet' type='text/css'>
             <script src="js/phaser.min.js"></script>
-            
+
             <script src="js/game.js"></script>
-            <script src="js/classes.js"></script>
+            <script src="js/class/Room.js"></script>
+            <script src="js/class/Actor.js"></script>
+            <script src="js/class/Item.js"></script>
+            <script src="js/class/Inventory.js"></script>
             <script src="js/menu.js"></script>
             <script src="js/play.js"></script>
             <script src="js/fight.js"></script>
@@ -45,7 +48,7 @@
                 <div id="inv-container">
                     <div class="inventory">
                         <div class="player"></div>
-                        
+
                         <div class="tooltip rare" id="inv-item-tooltip">
                             <h3 id="inv-item-head">Rare Plate Faulds of Nowwe'retalking-ton</h3>
                             <em id="inv-item-slot">Legs</em>
@@ -103,7 +106,7 @@
                                 <li></li>
                             </ul>
                         </div>
-                        
+
                         <div class="inv-items-container">
                             <ul class="inv-items">
                                 <li class="inv-simple" id="inv-slot-head" onMouseOver="loadInvTooltip('head')"></li>
@@ -112,7 +115,7 @@
                                 <li class="inv-rare" id="inv-slot-legs" onMouseOver="loadInvTooltip('legs')"></li>
                                 <li class="inv-mythical" id="inv-slot-feet" onMouseOver="loadInvTooltip('feet')"></li>
                             </ul>
-                            
+
                             <ul class="inv-items">
                                 <li class="inv-simple" id="inv-slot-amulet" onMouseOver="loadInvTooltip('amulet')"></li>
                                 <li class="inv-common" id="inv-slot-ring" onMouseOver="loadInvTooltip('ring')"></li>
